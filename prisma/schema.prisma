@@ -1,0 +1,24 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Reflexiones compartidas por los visitantes
+model Reflection {
+  id        String   @id @default(cuid())
+  name      String   @default("Anónimo")
+  text      String
+  createdAt DateTime @default(now())
+}
+
+// Suscriptores al boletín de consciencia
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,38 @@
+# dependencias
+node_modules/
+
+# next.js
+.next/
+out/
+
+# entorno y secretos (nunca subir)
+.env
+.env.*
+.deploy-secrets.env
+
+# base de datos local (SQLite)
+db/
+
+# vercel
+.vercel/
+
+# sandbox: scripts y logs internos
+.zscripts/
+dev.log
+server.log
+Caddyfile
+examples/
+tests/
+download/
+skills/
+
+# intermedios de generación de audio (los mp3 finales sí se suben en public/audios)
+scripts/audio-build/build/
+scripts/audio-build/tts/
+scripts/audio-build/voice-matrix/
+scripts/audio-build/*.wav
+
+# varios
+*.tsbuildinfo
+.DS_Store
+npm-debug.log*

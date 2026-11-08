@@ -1,0 +1,227 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans-body);
+  --font-serif: var(--font-serif-display);
+  --color-sage: var(--sage);
+  --color-sage-soft: var(--sage-soft);
+  --color-terracotta: var(--terracotta);
+  --color-gold: var(--gold);
+  --color-sand: var(--sand);
+  --color-ink: var(--ink);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 1rem;
+  /* Paleta amanecer: crema, salvia, terracota */
+  --background: #f8f4ec;
+  --foreground: #35302a;
+  --card: #fffdf8;
+  --card-foreground: #35302a;
+  --popover: #fffdf8;
+  --popover-foreground: #35302a;
+  --primary: #6f8b67;
+  --primary-foreground: #f8f4ec;
+  --secondary: #ede4d3;
+  --secondary-foreground: #4a4238;
+  --muted: #f0e9db;
+  --muted-foreground: #7d7261;
+  --accent: #c1795a;
+  --accent-foreground: #fff8f2;
+  --destructive: #b3452e;
+  --border: #e3d9c6;
+  --input: #e3d9c6;
+  --ring: #6f8b67;
+  --sage: #6f8b67;
+  --sage-soft: #dfe7d8;
+  --terracotta: #c1795a;
+  --gold: #b08d57;
+  --sand: #ede4d3;
+  --ink: #35302a;
+}
+
+.dark {
+  /* Paleta noche: carbón cálido, salvia clara */
+  --background: #191712;
+  --foreground: #ece5d6;
+  --card: #221f18;
+  --card-foreground: #ece5d6;
+  --popover: #221f18;
+  --popover-foreground: #ece5d6;
+  --primary: #9db88f;
+  --primary-foreground: #1c1a14;
+  --secondary: #2b271e;
+  --secondary-foreground: #ece5d6;
+  --muted: #2b271e;
+  --muted-foreground: #a89c88;
+  --accent: #d29476;
+  --accent-foreground: #1c1a14;
+  --destructive: #d4694c;
+  --border: rgba(236, 229, 214, 0.14);
+  --input: rgba(236, 229, 214, 0.18);
+  --ring: #9db88f;
+  --sage: #9db88f;
+  --sage-soft: #33372b;
+  --terracotta: #d29476;
+  --gold: #c9a86e;
+  --sand: #2b271e;
+  --ink: #ece5d6;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  ::selection {
+    background: var(--sage-soft);
+    color: var(--ink);
+  }
+}
+
+/* ---------- Animaciones ---------- */
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.28);
+    opacity: 1;
+  }
+}
+
+@keyframes breathe-soft {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.9;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -22px, 0);
+  }
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ripple-out {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-breathe {
+  animation: breathe 9s ease-in-out infinite;
+}
+
+.animate-breathe-soft {
+  animation: breathe-soft 7s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 11s ease-in-out infinite;
+}
+
+.animate-spin-slower {
+  animation: spin-slow 48s linear infinite;
+}
+
+.animate-ripple {
+  animation: ripple-out 4.5s ease-out infinite;
+}
+
+/* ---------- Detalles visuales ---------- */
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.hero-grain {
+  background-image: radial-gradient(
+      circle at 18% 22%,
+      var(--sage-soft) 0%,
+      transparent 42%
+    ),
+    radial-gradient(circle at 82% 12%, rgba(193, 121, 90, 0.16) 0%, transparent 40%),
+    radial-gradient(circle at 70% 85%, rgba(176, 141, 87, 0.14) 0%, transparent 45%);
+}
+
+.divider-om {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--border) 20%,
+    var(--gold) 50%,
+    var(--border) 80%,
+    transparent
+  );
+  height: 1px;
+}
+
+/* Scrollbar suave para listas */
+.scroll-serene {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sage) transparent;
+}
+.scroll-serene::-webkit-scrollbar {
+  width: 6px;
+}
+.scroll-serene::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scroll-serene::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--sage) 55%, transparent);
+  border-radius: 999px;
+}
