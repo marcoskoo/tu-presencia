@@ -36,3 +36,5 @@ scripts/audio-build/*.wav
 *.tsbuildinfo
 .DS_Store
 npm-debug.log*
+.vercel
+.env*
