@@ -4,14 +4,15 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ChevronDown, Sparkles, Wind } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-
-const CHIPS = ['Meditación guiada', 'Presencia consciente', 'Respiración', 'Audio con campanas', 'Silencio', 'Gratitud']
+import { useI18n } from '@/lib/i18n/context'
 
 export function Hero() {
+  const { d } = useI18n()
+
   return (
     <section
       id="inicio"
-      aria-label="Bienvenida"
+      aria-label={d.hero.ariaLabel}
       className="hero-grain relative flex min-h-[100svh] items-center justify-center overflow-hidden pt-16"
     >
       {/* Orbes flotantes de fondo */}
@@ -60,9 +61,10 @@ export function Hero() {
             />
           </svg>
           <p className="relative z-10 font-serif text-2xl font-medium leading-snug text-ink sm:text-3xl">
-            AQUÍ
+            {d.hero.titleHere}
             <br />
-            <span className="italic text-gold">y</span> AHORA
+            <span className="italic text-gold">{d.hero.titleAnd}</span>{' '}
+            {d.hero.titleNow}
           </p>
         </motion.div>
 
@@ -73,20 +75,17 @@ export function Hero() {
         >
           <p className="inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground backdrop-blur">
             <Sparkles className="size-3.5 text-gold" aria-hidden="true" />
-            Espíritu · Práctica · Comunidad
+            {d.hero.badge}
           </p>
 
           <h1 className="mt-7 font-serif text-4xl font-medium leading-[1.12] text-balance sm:text-5xl md:text-6xl">
-            La vida sucede{' '}
-            <em className="text-sage">AQUÍ</em> y{' '}
-            <em className="text-terracotta">AHORA</em>
+            {d.hero.titleA}{' '}
+            <em className="text-sage">{d.hero.titleHere}</em> {d.hero.titleAnd}{' '}
+            <em className="text-terracotta">{d.hero.titleNow}</em>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            Un espacio abierto para compartir y cultivar la espiritualidad en el
-            día a día: meditación, práctica de la presencia consciente y
-            respiración consciente para volver, instante a instante, al único
-            lugar donde la vida realmente sucede.
+            {d.hero.subtitle}
           </p>
         </motion.div>
 
@@ -103,7 +102,7 @@ export function Hero() {
           >
             <Link href="#respiracion">
               <Wind className="size-5" aria-hidden="true" />
-              Respirar ahora
+              {d.hero.ctaPrimary}
             </Link>
           </Button>
           <Button
@@ -112,7 +111,7 @@ export function Hero() {
             variant="outline"
             className="rounded-full border-sage/50 px-8 text-base font-medium text-sage transition-colors hover:bg-sage-soft/60 hover:text-sage"
           >
-            <Link href="#practicas">Explorar las prácticas</Link>
+            <Link href="#practicas">{d.hero.ctaSecondary}</Link>
           </Button>
         </motion.div>
 
@@ -121,9 +120,9 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 0.7 }}
           className="mt-12 flex flex-wrap items-center justify-center gap-2.5"
-          aria-label="Temas del espacio"
+          aria-label={d.hero.chipsLabel}
         >
-          {CHIPS.map((chip) => (
+          {d.hero.chips.map((chip) => (
             <li
               key={chip}
               className="rounded-full border border-border/80 bg-card/60 px-4 py-1.5 text-xs font-medium tracking-wide text-muted-foreground backdrop-blur"

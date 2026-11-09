@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { FadeIn, SectionHeader } from '@/components/landing/section-header'
+import { useI18n } from '@/lib/i18n/context'
 
 type Reflection = {
   id: string
@@ -22,6 +23,7 @@ type Reflection = {
 const MAX_CHARS = 500
 
 export function Reflections() {
+  const { d, formatDate } = useI18n()
   const { toast } = useToast()
   const [reflections, setReflections] = React.useState<Reflection[]>([])
   const [loading, setLoading] = React.useState(true)
@@ -38,8 +40,8 @@ export function Reflections() {
       setReflections(data.reflections ?? [])
     } catch {
       toast({
-        title: 'No se pudieron cargar las reflexiones',
-        description: 'Inténtalo de nuevo en unos instantes.',
+        title: d.reflections.toasts.loadError,
+        description: d.reflections.toasts.loadErrorHint,
         variant: 'destructive',
       })
     } finally {
@@ -56,8 +58,8 @@ export function Reflections() {
     const trimmed = text.trim()
     if (!trimmed) {
       toast({
-        title: 'Tu reflexión está vacía',
-        description: 'Escribe unas palabras desde el corazón antes de enviar.',
+        title: d.reflections.toasts.empty,
+        description: d.reflections.toasts.emptyHint,
         variant: 'destructive',
       })
       return
@@ -75,13 +77,13 @@ export function Reflections() {
       setText('')
       setName('')
       toast({
-        title: 'Gracias por compartir',
-        description: 'Tu reflexión ya forma parte de este círculo de consciencia.',
+        title: d.reflections.toasts.sent,
+        description: d.reflections.toasts.sentHint,
       })
     } catch {
       toast({
-        title: 'No se pudo enviar tu reflexión',
-        description: 'Comprueba tu conexión e inténtalo de nuevo.',
+        title: d.reflections.toasts.sendError,
+        description: d.reflections.toasts.sendErrorHint,
         variant: 'destructive',
       })
     } finally {
@@ -92,18 +94,19 @@ export function Reflections() {
   return (
     <section
       id="comunidad"
-      aria-label="Reflexiones de la comunidad"
+      aria-label={d.reflections.sectionLabel}
       className="scroll-mt-20 py-24 sm:py-28"
     >
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         <SectionHeader
-          eyebrow="Comunidad despierta"
+          eyebrow={d.reflections.eyebrow}
           title={
             <>
-              Comparte tu <em className="text-sage">reflexión</em>
+              {d.reflections.titleA}{' '}
+              <em className="text-sage">{d.reflections.titleB}</em>
             </>
           }
-          description="¿Qué te ha enseñado la práctica? ¿Qué momento de presencia recuerdas? Deja tus palabras aquí: alguien que camina despertando las necesita."
+          description={d.reflections.description}
         />
 
         <div className="mt-16 grid gap-8 lg:grid-cols-2">
@@ -120,10 +123,10 @@ export function Reflections() {
                   </div>
                   <div>
                     <h3 className="font-serif text-xl font-medium">
-                      Tu voz en el círculo
+                      {d.reflections.formTitle}
                     </h3>
                     <p className="text-xs text-muted-foreground">
-                      Se comparte con respeto, sin juicios ni consejos.
+                      {d.reflections.formHint}
                     </p>
                   </div>
                 </div>
@@ -131,13 +134,13 @@ export function Reflections() {
                 <form onSubmit={handleSubmit} className="mt-7 space-y-5">
                   <div className="space-y-2">
                     <Label htmlFor="reflection-name" className="text-sm">
-                      Nombre <span className="text-muted-foreground">(opcional)</span>
+                      {d.reflections.nameLabel} <span className="text-muted-foreground">{d.reflections.optional}</span>
                     </Label>
                     <Input
                       id="reflection-name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="¿Cómo te llamas?"
+                      placeholder={d.reflections.namePlaceholder}
                       maxLength={40}
                       autoComplete="off"
                       className="bg-background"
@@ -146,7 +149,7 @@ export function Reflections() {
                   <div className="space-y-2">
                     <div className="flex items-baseline justify-between">
                       <Label htmlFor="reflection-text" className="text-sm">
-                        Tu reflexión
+                        {d.reflections.textLabel}
                       </Label>
                       <span
                         className={`text-xs tabular-nums ${
@@ -163,7 +166,7 @@ export function Reflections() {
                       id="reflection-text"
                       value={text}
                       onChange={(e) => setText(e.target.value.slice(0, MAX_CHARS))}
-                      placeholder="Hoy, en la pausa de la respiración, noté que…"
+                      placeholder={d.reflections.textPlaceholder}
                       rows={6}
                       className="resize-none bg-background leading-relaxed"
                     />
@@ -176,12 +179,12 @@ export function Reflections() {
                     {submitting ? (
                       <>
                         <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                        Enviando con calma…
+                        {d.reflections.sending}
                       </>
                     ) : (
                       <>
                         <Send className="size-4" aria-hidden="true" />
-                        Compartir mi reflexión
+                        {d.reflections.send}
                       </>
                     )}
                   </Button>
@@ -196,7 +199,7 @@ export function Reflections() {
               <CardContent className="flex h-full flex-col p-7">
                 <div className="flex items-center justify-between gap-3">
                   <h3 className="font-serif text-xl font-medium">
-                    Voces recientes
+                    {d.reflections.wallTitle}
                     <span className="ml-2 align-middle text-xs font-normal text-muted-foreground">
                       ({reflections.length})
                     </span>
@@ -205,7 +208,7 @@ export function Reflections() {
                     variant="ghost"
                     size="icon"
                     onClick={loadReflections}
-                    aria-label="Actualizar las reflexiones"
+                    aria-label={d.reflections.refresh}
                     className="text-muted-foreground hover:text-foreground"
                   >
                     <RefreshCw className="size-4" aria-hidden="true" />
@@ -234,8 +237,7 @@ export function Reflections() {
                           aria-hidden="true"
                         />
                         <p className="mt-4 max-w-xs font-serif text-base italic text-muted-foreground">
-                          Todavía no hay voces. Sé la primera en dejar una
-                          huella en este círculo.
+                          {d.reflections.empty}
                         </p>
                       </div>
                     </div>
@@ -256,7 +258,7 @@ export function Reflections() {
                               {r.name}
                             </p>
                             <time className="text-xs text-muted-foreground">
-                              {new Date(r.createdAt).toLocaleDateString('es-ES', {
+                              {formatDate(r.createdAt, {
                                 day: 'numeric',
                                 month: 'long',
                                 year: 'numeric',

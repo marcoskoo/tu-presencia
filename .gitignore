@@ -38,3 +38,6 @@ scripts/audio-build/*.wav
 npm-debug.log*
 .vercel
 .env*
+gen-new.log
+vlm-check.js
+vlm-check2.js

@@ -162,6 +162,26 @@
   }
 }
 
+/* Respiración 4·6 de la pausa de tres minutos (ciclo de 11 s) */
+@keyframes pause-breathe {
+  0% {
+    transform: scale(1);
+  }
+  36.4% {
+    transform: scale(1.3);
+  }
+  45.5% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.pause-breathe {
+  animation: pause-breathe 11s ease-in-out infinite;
+}
+
 .animate-breathe {
   animation: breathe 9s ease-in-out infinite;
 }

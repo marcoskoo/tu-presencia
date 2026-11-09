@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { I18nProvider } from "@/lib/i18n/context";
 
 const serifDisplay = Cormorant_Garamond({
   variable: "--font-serif-display",
@@ -33,8 +34,12 @@ export const metadata: Metadata = {
     "respiración consciente",
     "mindfulness",
     "espiritual",
+    "yoga nidra",
+    "mantra",
+    "gratitud",
   ],
   authors: [{ name: "Presencia AQUÍ y AHORA" }],
+  manifest: "/manifest.webmanifest",
   openGraph: {
     title: "Presencia AQUÍ y AHORA",
     description:
@@ -49,6 +54,21 @@ export const metadata: Metadata = {
     description:
       "Meditaciones guiadas con audio, presencia consciente y respiración consciente. Un espacio para volver al instante presente.",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Presencia",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f7f5f0" },
+    { media: "(prefers-color-scheme: dark)", color: "#1c1b18" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -67,8 +87,10 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
+          <I18nProvider>
+            {children}
+            <Toaster />
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

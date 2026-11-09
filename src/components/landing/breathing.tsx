@@ -14,10 +14,12 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FadeIn, SectionHeader } from '@/components/landing/section-header'
+import { useI18n } from '@/lib/i18n/context'
+import { logPractice } from '@/lib/practice-log'
 
-/* ---------- Definición de técnicas ---------- */
+/* ---------- Definición de técnicas (ritmos; los textos vienen del i18n) ---------- */
 
-type Phase = { label: string; seconds: number; from: number; to: number }
+type PhaseRhythm = { seconds: number; from: number; to: number }
 type TechniqueKey =
   | 'caja'
   | 'coherente'
@@ -27,105 +29,77 @@ type TechniqueKey =
   | 'alternada'
   | 'abeja'
 
-const TECHNIQUES: Record<
-  TechniqueKey,
-  { name: string; pattern: string; description: string; phases: Phase[] }
-> = {
+const RHYTHMS: Record<TechniqueKey, { pattern: string; phases: PhaseRhythm[] }> = {
   caja: {
-    name: 'Respiración cuadrada',
     pattern: '4 · 4 · 4 · 4',
-    description:
-      'Cuatro fases iguales que dibujan un cuadrado con tu aliento. Equilibra el sistema nervioso y afina la atención. Ideal para el día a día.',
     phases: [
-      { label: 'Inhala', seconds: 4, from: 1, to: 1.34 },
-      { label: 'Sostén', seconds: 4, from: 1.34, to: 1.34 },
-      { label: 'Exhala', seconds: 4, from: 1.34, to: 1 },
-      { label: 'Pausa', seconds: 4, from: 1, to: 1 },
+      { seconds: 4, from: 1, to: 1.34 },
+      { seconds: 4, from: 1.34, to: 1.34 },
+      { seconds: 4, from: 1.34, to: 1 },
+      { seconds: 4, from: 1, to: 1 },
     ],
   },
   coherente: {
-    name: 'Respiración coherente',
     pattern: '4 · 6',
-    description:
-      'Cinco respiraciones por minuto sincronizan corazón y mente. La práctica favorita para recuperar la calma en minutos.',
     phases: [
-      { label: 'Inhala', seconds: 4, from: 1, to: 1.34 },
-      { label: 'Exhala', seconds: 6, from: 1.34, to: 1 },
+      { seconds: 4, from: 1, to: 1.34 },
+      { seconds: 6, from: 1.34, to: 1 },
     ],
   },
   relajante: {
-    name: 'Respiración 4 · 7 · 8',
     pattern: '4 · 7 · 8',
-    description:
-      'El soplo tranquilizante: inhala suave, sostén y exhala largo. Perfecta para soltar tensiones antes de dormir.',
     phases: [
-      { label: 'Inhala', seconds: 4, from: 1, to: 1.34 },
-      { label: 'Sostén', seconds: 7, from: 1.34, to: 1.34 },
-      { label: 'Exhala', seconds: 8, from: 1.34, to: 1 },
+      { seconds: 4, from: 1, to: 1.34 },
+      { seconds: 7, from: 1.34, to: 1.34 },
+      { seconds: 8, from: 1.34, to: 1 },
     ],
   },
   ujjayi: {
-    name: 'Ujjayi · Aliento océano',
     pattern: '5 · 5',
-    description:
-      'La «respiración victoriosa» del yoga: una leve constricción en la garganta convierte tu aliento en el sonido de las olas. Calma y concentra a la vez.',
     phases: [
-      { label: 'Inhala', seconds: 5, from: 1, to: 1.34 },
-      { label: 'Exhala con olas', seconds: 5, from: 1.34, to: 1 },
+      { seconds: 5, from: 1, to: 1.34 },
+      { seconds: 5, from: 1.34, to: 1 },
     ],
   },
   suspiro: {
-    name: 'Suspiro fisiológico',
     pattern: '4 · 2 · 8',
-    description:
-      'La forma en que el cuerpo libera estrés de manera natural: dos inhalaciones seguidas y una exhalación larga. La vía más rápida hacia la calma.',
     phases: [
-      { label: 'Inhala', seconds: 4, from: 1, to: 1.24 },
-      { label: 'Inhala un poco más', seconds: 2, from: 1.24, to: 1.34 },
-      { label: 'Exhala largo', seconds: 8, from: 1.34, to: 1 },
+      { seconds: 4, from: 1, to: 1.24 },
+      { seconds: 2, from: 1.24, to: 1.34 },
+      { seconds: 8, from: 1.34, to: 1 },
     ],
   },
   alternada: {
-    name: 'Respiración alternada',
     pattern: 'Nadi Shodhana',
-    description:
-      'Alterna el aire entre las dos fosas nasales para equilibrar cuerpo y mente. Un ciclo completo dura 28 segundos y abarca ambos lados.',
     phases: [
-      { label: 'Inhala izq.', seconds: 4, from: 1, to: 1.34 },
-      { label: 'Sostén', seconds: 4, from: 1.34, to: 1.34 },
-      { label: 'Exhala der.', seconds: 6, from: 1.34, to: 1 },
-      { label: 'Inhala der.', seconds: 4, from: 1, to: 1.34 },
-      { label: 'Sostén', seconds: 4, from: 1.34, to: 1.34 },
-      { label: 'Exhala izq.', seconds: 6, from: 1.34, to: 1 },
+      { seconds: 4, from: 1, to: 1.34 },
+      { seconds: 4, from: 1.34, to: 1.34 },
+      { seconds: 6, from: 1.34, to: 1 },
+      { seconds: 4, from: 1, to: 1.34 },
+      { seconds: 4, from: 1.34, to: 1.34 },
+      { seconds: 6, from: 1.34, to: 1 },
     ],
   },
   abeja: {
-    name: 'Respiración de la abeja',
     pattern: 'Bhramari · 4 · 8',
-    description:
-      'Al exhalar con un suave zumbido, la vibración enmascara el ruido de la mente y prepara el descanso. Ideal al final del día.',
     phases: [
-      { label: 'Inhala', seconds: 4, from: 1, to: 1.34 },
-      { label: 'Zumba al exhalar', seconds: 8, from: 1.34, to: 1 },
+      { seconds: 4, from: 1, to: 1.34 },
+      { seconds: 8, from: 1.34, to: 1 },
     ],
   },
 }
 
-const BENEFITS = [
-  { icon: HeartPulse, label: 'Equilibra el ritmo del corazón' },
-  { icon: Wind, label: 'Reduce el estrés y la ansiedad' },
-  { icon: Moon, label: 'Prepara un sueño profundo' },
-  { icon: Scale, label: 'Aporta claridad y centrado' },
-]
+const BENEFIT_ICONS = [HeartPulse, Wind, Moon, Scale]
 
 /* ---------- Componente ---------- */
 
 export function Breathing() {
+  const { d } = useI18n()
   const [technique, setTechnique] = React.useState<TechniqueKey>('caja')
   const [running, setRunning] = React.useState(false)
   const [phaseIndex, setPhaseIndex] = React.useState(0)
   const [secondsLeft, setSecondsLeft] = React.useState(
-    TECHNIQUES.caja.phases[0].seconds
+    RHYTHMS.caja.phases[0].seconds
   )
   const [cycles, setCycles] = React.useState(0)
   const [totalSeconds, setTotalSeconds] = React.useState(0)
@@ -137,6 +111,7 @@ export function Breathing() {
   const progressRef = React.useRef(0)
   const soundRef = React.useRef(soundOn)
   const chimeRef = React.useRef<HTMLAudioElement | null>(null)
+  const loggedRef = React.useRef(false)
 
   // Ref sincronizada para que el bucle de animación lea el estado actual
   React.useEffect(() => {
@@ -152,7 +127,8 @@ export function Breathing() {
     chimeRef.current.play().catch(() => {})
   }, [])
 
-  const phases = TECHNIQUES[technique].phases
+  const rhythms = RHYTHMS[technique]
+  const phases = rhythms.phases
   const cycleSeconds = phases.reduce((acc, p) => acc + p.seconds, 0)
 
   /* Bucle de animación: escala suave del círculo + cuenta atrás + anillo de ciclo */
@@ -201,7 +177,7 @@ export function Breathing() {
 
       const remain = Math.max(1, Math.ceil((1 - progressRef.current) * p.seconds))
       setSecondsLeft((prev) => (prev === remain ? prev : remain))
-      setTotalSeconds((prev) => prev + (dt >= 0 && dt < 1 ? dt : 0) )
+      setTotalSeconds((prev) => prev + (dt >= 0 && dt < 1 ? dt : 0))
 
       raf = requestAnimationFrame(frame)
     }
@@ -210,6 +186,21 @@ export function Breathing() {
     return () => cancelAnimationFrame(raf)
   }, [running, phases, cycleSeconds, playChime])
 
+  // Registrar la sesión al pausar (una vez por sesión acumulada)
+  const flushPractice = React.useCallback(() => {
+    setTotalSeconds((total) => {
+      if (total >= 60 && !loggedRef.current) {
+        loggedRef.current = true
+        logPractice({ type: 'breathing', minutes: total / 60 })
+      }
+      return total
+    })
+  }, [])
+
+  React.useEffect(() => {
+    if (!running) flushPractice()
+  }, [running, flushPractice])
+
   const resetSession = React.useCallback(
     (nextTechnique?: TechniqueKey) => {
       const key = nextTechnique ?? technique
@@ -217,9 +208,10 @@ export function Breathing() {
       phaseRef.current = 0
       progressRef.current = 0
       setPhaseIndex(0)
-      setSecondsLeft(TECHNIQUES[key].phases[0].seconds)
+      setSecondsLeft(RHYTHMS[key].phases[0].seconds)
       setCycles(0)
       setTotalSeconds(0)
+      loggedRef.current = false
       if (circleRef.current) circleRef.current.style.transform = 'scale(1)'
       if (ringRef.current) {
         ringRef.current.style.strokeDashoffset = String(2 * Math.PI * 88)
@@ -234,7 +226,8 @@ export function Breathing() {
     resetSession(key)
   }
 
-  const currentPhase = phases[phaseIndex]
+  const phaseLabels = d.breathing.techniques[technique].phases
+  const currentPhase = { label: phaseLabels[Math.min(phaseIndex, phaseLabels.length - 1)] }
   const minutes = Math.floor(totalSeconds / 60)
   const secondsRemain = Math.floor(totalSeconds % 60)
   const mmss = `${minutes}:${String(secondsRemain).padStart(2, '0')}`
@@ -242,29 +235,29 @@ export function Breathing() {
   return (
     <section
       id="respiracion"
-      aria-label="Ejercicio de respiración consciente"
+      aria-label={d.breathing.chooseTechnique}
       className="scroll-mt-20 py-24 sm:py-28"
     >
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         <SectionHeader
-          eyebrow="Práctica guiada en vivo"
+          eyebrow={d.breathing.eyebrow}
           title={
             <>
-              Respira <em className="text-sage">conmigo</em>
+              {d.breathing.titleA}{' '}
+              <em className="text-sage">{d.breathing.titleB}</em>
             </>
           }
-          description="Elige una técnica, siéntate cómodamente y deja que el círculo guíe tu aliento: cuando crece, inhala; cuando se sostiene, retén; cuando regresa, exhala."
+          description={d.breathing.description}
         />
 
         {/* Selector de técnica */}
         <FadeIn delay={0.1}>
           <div
             role="group"
-            aria-label="Elige una técnica de respiración"
+            aria-label={d.breathing.chooseTechnique}
             className="mx-auto mt-12 grid max-w-4xl grid-cols-2 gap-3 lg:grid-cols-4"
           >
-            {(Object.keys(TECHNIQUES) as TechniqueKey[]).map((key) => {
-              const t = TECHNIQUES[key]
+            {(Object.keys(RHYTHMS) as TechniqueKey[]).map((key) => {
               const active = technique === key
               return (
                 <button
@@ -279,21 +272,21 @@ export function Breathing() {
                   }`}
                 >
                   <span className="block font-serif text-base font-semibold sm:text-lg">
-                    {t.name}
+                    {d.breathing.techniques[key].name}
                   </span>
                   <span
                     className={`mt-1 block text-xs font-medium tracking-[0.2em] ${
                       active ? 'text-sage' : 'text-muted-foreground'
                     }`}
                   >
-                    {t.pattern}
+                    {RHYTHMS[key].pattern}
                   </span>
                 </button>
               )
             })}
           </div>
           <p className="mx-auto mt-4 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
-            {TECHNIQUES[technique].description}
+            {d.breathing.techniques[technique].description}
           </p>
         </FadeIn>
 
@@ -358,7 +351,7 @@ export function Breathing() {
                   className="font-serif text-2xl font-medium italic text-ink sm:text-3xl"
                   aria-live="polite"
                 >
-                  {running ? currentPhase.label : '¿Empezamos?'}
+                  {running ? currentPhase.label : d.breathing.startQuestion}
                 </p>
                 <p
                   className="mt-1 font-serif text-5xl font-light tabular-nums text-ink/90 sm:text-6xl"
@@ -368,8 +361,8 @@ export function Breathing() {
                 </p>
                 <span className="sr-only" aria-live="polite">
                   {running
-                    ? `${currentPhase.label}, quedan ${secondsLeft} segundos`
-                    : 'Sesión en pausa'}
+                    ? d.breathing.phaseLive(currentPhase.label, secondsLeft)
+                    : d.breathing.pausedSession}
                 </span>
               </div>
             </div>
@@ -383,18 +376,20 @@ export function Breathing() {
               <Button
                 onClick={() => setRunning((r) => !r)}
                 size="lg"
-                aria-label={running ? 'Pausar la práctica' : 'Comenzar la práctica'}
+                aria-label={running ? d.breathing.controls.pause : d.breathing.controls.begin}
                 className="h-14 gap-2.5 rounded-full bg-sage px-9 text-base font-medium text-primary-foreground shadow-lg shadow-sage/25 transition-all hover:opacity-90 hover:shadow-xl"
               >
                 {running ? (
                   <>
                     <Pause className="size-5" aria-hidden="true" />
-                    Pausar
+                    {d.breathing.controls.paused}
                   </>
                 ) : (
                   <>
                     <Play className="size-5" aria-hidden="true" />
-                    {totalSeconds > 0 ? 'Continuar' : 'Comenzar'}
+                    {totalSeconds > 0
+                      ? d.breathing.controls.goOn
+                      : d.breathing.controls.start}
                   </>
                 )}
               </Button>
@@ -402,7 +397,7 @@ export function Breathing() {
                 onClick={() => resetSession()}
                 variant="outline"
                 size="icon"
-                aria-label="Reiniciar la sesión"
+                aria-label={d.breathing.controls.restart}
                 className="size-12 rounded-full border-border/80 text-muted-foreground transition-colors hover:text-foreground"
               >
                 <RotateCcw className="size-5" aria-hidden="true" />
@@ -414,8 +409,8 @@ export function Breathing() {
                 aria-pressed={soundOn}
                 aria-label={
                   soundOn
-                    ? 'Desactivar la señal sonora de fase'
-                    : 'Activar la señal sonora de fase'
+                    ? d.breathing.controls.soundOff
+                    : d.breathing.controls.soundOn
                 }
                 className={`size-12 rounded-full transition-colors ${
                   soundOn
@@ -432,25 +427,24 @@ export function Breathing() {
             </div>
 
             <p className="text-center text-xs text-muted-foreground">
-              La campanita suena al cambiar de fase para guiarte con los ojos
-              cerrados.
+              {d.breathing.soundHint}
             </p>
 
             <dl className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <dt>Ciclos completos</dt>
+                <dt>{d.breathing.stats.cycles}</dt>
                 <dd className="font-serif text-lg font-semibold text-foreground tabular-nums">
                   {cycles}
                 </dd>
               </div>
               <div className="flex items-center gap-2">
-                <dt>Tiempo en práctica</dt>
+                <dt>{d.breathing.stats.time}</dt>
                 <dd className="font-serif text-lg font-semibold text-foreground tabular-nums">
                   {mmss}
                 </dd>
               </div>
               <div className="flex items-center gap-2">
-                <dt>Ciclo de</dt>
+                <dt>{d.breathing.stats.cycleOf}</dt>
                 <dd className="font-serif text-lg font-semibold text-foreground tabular-nums">
                   {cycleSeconds}s
                 </dd>
@@ -463,17 +457,20 @@ export function Breathing() {
         <FadeIn delay={0.25}>
           <ul
             className="mx-auto mt-14 flex max-w-4xl flex-wrap items-center justify-center gap-3"
-            aria-label="Beneficios de la respiración consciente"
+            aria-label={d.breathing.benefitsLabel}
           >
-            {BENEFITS.map((b) => (
-              <li
-                key={b.label}
-                className="flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-4 py-2 text-xs font-medium text-muted-foreground backdrop-blur"
-              >
-                <b.icon className="size-4 text-sage" aria-hidden="true" />
-                {b.label}
-              </li>
-            ))}
+            {d.breathing.benefits.map((benefit, i) => {
+              const Icon = BENEFIT_ICONS[i] ?? Wind
+              return (
+                <li
+                  key={benefit}
+                  className="flex items-center gap-2 rounded-full border border-border/70 bg-card/70 px-4 py-2 text-xs font-medium text-muted-foreground backdrop-blur"
+                >
+                  <Icon className="size-4 text-sage" aria-hidden="true" />
+                  {benefit}
+                </li>
+              )
+            })}
           </ul>
         </FadeIn>
       </div>

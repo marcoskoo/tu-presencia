@@ -5,78 +5,93 @@ import {
   Eye,
   FastForward,
   Flower2,
+  Footprints,
+  Lock,
   Moon,
   Pause,
   Play,
   Rewind,
   Timer,
+  Waves,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Slider } from '@/components/ui/slider'
 import { FadeIn, SectionHeader } from '@/components/landing/section-header'
+import { useI18n } from '@/lib/i18n/context'
+import { usePremium } from '@/lib/premium'
+import { logPractice } from '@/lib/practice-log'
+import { useToast } from '@/hooks/use-toast'
+
+type MeditationId =
+  | 'presencia'
+  | 'escaneo'
+  | 'dormir'
+  | 'pausa'
+  | 'caminando'
+  | 'yogaNidra'
+  | 'extendida'
 
 type Meditation = {
-  id: string
-  title: string
+  id: MeditationId
   file: string
-  durationLabel: string
-  tag: string
   icon: React.ElementType
   tint: string
   bg: string
-  description: string
+  premium?: boolean
 }
 
 const MEDITATIONS: Meditation[] = [
   {
     id: 'presencia',
-    title: 'Presencia AQUÍ y AHORA',
     file: '/audios/meditacion-presencia.mp3',
-    durationLabel: '≈ 5 min',
-    tag: 'Presencia',
     icon: Eye,
     tint: 'text-sage',
     bg: 'bg-sage-soft/70 dark:bg-sage-soft/40',
-    description:
-      'La práctica esencial de este espacio: sonidos, cuerpo y respiración te devuelven, instante a instante, al aquí y ahora.',
   },
   {
     id: 'escaneo',
-    title: 'Escaneo corporal relajante',
     file: '/audios/meditacion-escaneo.mp3',
-    durationLabel: '≈ 5 min',
-    tag: 'Relajación',
     icon: Flower2,
     tint: 'text-terracotta',
     bg: 'bg-terracotta/10',
-    description:
-      'Un recorrido amable por todo el cuerpo, de los pies a la cabeza, para soltar tensiones y descansar en la quietud.',
   },
   {
     id: 'dormir',
-    title: 'Calma profunda para dormir',
     file: '/audios/meditacion-dormir.mp3',
-    durationLabel: '≈ 4 min',
-    tag: 'Descanso',
     icon: Moon,
     tint: 'text-gold',
     bg: 'bg-gold/10',
-    description:
-      'Prepara el cuerpo y la mente para un sueño sereno. Ponla ya en la cama, con las luces bajas y sin prisa.',
   },
   {
     id: 'pausa',
-    title: 'Pausa de un minuto',
     file: '/audios/meditacion-pausa.mp3',
-    durationLabel: '≈ 1 min',
-    tag: 'Al instante',
     icon: Timer,
     tint: 'text-sage',
     bg: 'bg-sage-soft/70 dark:bg-sage-soft/40',
-    description:
-      'Un minuto para respirar y volver. Perfecta entre tareas, antes de una reunión o en cualquier pausa del día.',
+  },
+  {
+    id: 'caminando',
+    file: '/audios/meditacion-caminando.mp3',
+    icon: Footprints,
+    tint: 'text-terracotta',
+    bg: 'bg-terracotta/10',
+  },
+  {
+    id: 'yogaNidra',
+    file: '/audios/meditacion-yoga-nidra.mp3',
+    icon: Waves,
+    tint: 'text-sage',
+    bg: 'bg-sage-soft/70 dark:bg-sage-soft/40',
+  },
+  {
+    id: 'extendida',
+    file: '/audios/meditacion-presencia-extendida.mp3',
+    icon: Moon,
+    tint: 'text-gold',
+    bg: 'bg-gold/10',
+    premium: true,
   },
 ]
 
@@ -90,11 +105,16 @@ function formatTime(seconds: number) {
 }
 
 export function Meditations() {
+  const { d, lang } = useI18n()
+  const { toast } = useToast()
+  const premium = usePremium()
+
   const audioRef = React.useRef<HTMLAudioElement | null>(null)
   const bellRef = React.useRef<HTMLAudioElement | null>(null)
   const autoplayRef = React.useRef(false)
+  const loggedRef = React.useRef(false)
 
-  const [selectedId, setSelectedId] = React.useState(MEDITATIONS[0].id)
+  const [selectedId, setSelectedId] = React.useState<MeditationId>('presencia')
   const [playing, setPlaying] = React.useState(false)
   const [time, setTime] = React.useState(0)
   const [duration, setDuration] = React.useState(0)
@@ -102,6 +122,7 @@ export function Meditations() {
   const [bellPlaying, setBellPlaying] = React.useState(false)
 
   const selected = MEDITATIONS.find((m) => m.id === selectedId) ?? MEDITATIONS[0]
+  const item = d.meditations.items[selected.id]
   const rate = RATES[rateIndex]
 
   // Al cambiar de meditación: reinicia y reproduce si se solicitó
@@ -129,16 +150,25 @@ export function Meditations() {
     }
   }
 
-  const selectMeditation = (id: string) => {
-    if (id === selectedId) {
+  const selectMeditation = (m: Meditation) => {
+    if (m.premium && !premium) {
+      toast({
+        title: d.timer.premiumLock,
+        description: d.premium.plusDesc,
+      })
+      document.getElementById('premium')?.scrollIntoView({ behavior: 'smooth' })
+      return
+    }
+    if (m.id === selectedId) {
       togglePlay()
       return
     }
     autoplayRef.current = true
-    setSelectedId(id)
+    setSelectedId(m.id)
     setPlaying(false)
     setTime(0)
     setDuration(0)
+    loggedRef.current = false
   }
 
   const skip = (delta: number) => {
@@ -149,6 +179,17 @@ export function Meditations() {
       audio.duration || Infinity
     )
     setTime(audio.currentTime)
+  }
+
+  // Registrar la práctica al terminar la reproducción
+  const handleEnded = () => {
+    setPlaying(false)
+    setTime(0)
+    if (!loggedRef.current && duration > 60) {
+      loggedRef.current = true
+      const type = selected.id === 'yogaNidra' ? 'nidra' : selected.id === 'caminando' ? 'walking' : 'meditation'
+      logPractice({ type, minutes: duration / 60 })
+    }
   }
 
   const playBell = () => {
@@ -172,18 +213,19 @@ export function Meditations() {
   return (
     <section
       id="meditaciones"
-      aria-label="Meditaciones guiadas con audio"
+      aria-label={d.meditations.sectionLabel}
       className="scroll-mt-20 py-24 sm:py-28"
     >
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
         <SectionHeader
-          eyebrow="Meditaciones guiadas con audio"
+          eyebrow={d.meditations.eyebrow}
           title={
             <>
-              Escucha, respira, <em className="text-sage">regresa</em>
+              {d.meditations.titleA}{' '}
+              <em className="text-sage">{d.meditations.titleB}</em>
             </>
           }
-          description="Meditaciones guiadas con voz suave y campanas tibetanas. Elige una, ponte los auriculares y deja que la voz te acompañe de vuelta al presente."
+          description={d.meditations.description}
         />
 
         <div className="mt-16 grid items-start gap-8 lg:grid-cols-[1fr_1.2fr]">
@@ -191,19 +233,21 @@ export function Meditations() {
           <FadeIn>
             <div
               role="listbox"
-              aria-label="Lista de meditaciones guiadas"
+              aria-label={d.meditations.listLabel}
               className="space-y-3"
             >
               {MEDITATIONS.map((m) => {
+                const info = d.meditations.items[m.id]
                 const active = m.id === selectedId
                 const isThisPlaying = active && playing
+                const locked = m.premium && !premium
                 return (
                   <button
                     key={m.id}
                     type="button"
                     role="option"
                     aria-selected={active}
-                    onClick={() => selectMeditation(m.id)}
+                    onClick={() => selectMeditation(m)}
                     className={`flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-300 ${
                       active
                         ? 'border-sage bg-sage-soft/70 shadow-md dark:bg-sage-soft/40'
@@ -219,12 +263,24 @@ export function Meditations() {
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block font-serif text-base font-semibold leading-snug sm:text-lg">
-                        {m.title}
+                        {info.title}
                       </span>
                       <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-                        <span>{m.durationLabel}</span>
+                        <span>{info.duration}</span>
                         <span aria-hidden="true">·</span>
-                        <span>{m.tag}</span>
+                        <span>{info.tag}</span>
+                        {lang !== 'es' ? (
+                          <>
+                            <span aria-hidden="true">·</span>
+                            <span>{d.common.audioEs}</span>
+                          </>
+                        ) : null}
+                        {m.premium ? (
+                          <span className={`ml-auto inline-flex items-center gap-1 rounded-full border border-gold/40 bg-gold/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold ${locked ? '' : 'hidden'}`}>
+                            <Lock className="size-3" aria-hidden="true" />
+                            {d.common.premium}
+                          </span>
+                        ) : null}
                       </span>
                     </span>
                     <span
@@ -246,8 +302,7 @@ export function Meditations() {
               })}
             </div>
             <p className="mt-4 px-1 text-xs leading-relaxed text-muted-foreground">
-              Consejo: busca un lugar tranquilo, usa auriculares si puedes y
-              deja el móvil en silencio. Este es tu momento.
+              {d.meditations.tip}
             </p>
           </FadeIn>
 
@@ -274,8 +329,8 @@ export function Meditations() {
                       onClick={togglePlay}
                       aria-label={
                         playing
-                          ? `Pausar «${selected.title}»`
-                          : `Reproducir «${selected.title}»`
+                          ? d.meditations.player.pauseTitle(item.title)
+                          : d.meditations.player.playTitle(item.title)
                       }
                       className="relative z-10 size-20 rounded-full border border-white/40 bg-card/85 text-sage shadow-lg backdrop-blur transition-transform hover:scale-105"
                     >
@@ -294,13 +349,13 @@ export function Meditations() {
                     variant="secondary"
                     className={`rounded-full ${selected.bg} ${selected.tint} font-medium`}
                   >
-                    {selected.tag} · {selected.durationLabel}
+                    {item.tag} · {item.duration}
                   </Badge>
                   <h3 className="mt-3 font-serif text-2xl font-medium leading-snug sm:text-3xl">
-                    {selected.title}
+                    {item.title}
                   </h3>
                   <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-                    {selected.description}
+                    {item.description}
                   </p>
                 </div>
 
@@ -316,8 +371,8 @@ export function Meditations() {
                       audio.currentTime = v[0]
                       setTime(v[0])
                     }}
-                    aria-label="Posición de la meditación"
-                    aria-valuetext={`${formatTime(time)} de ${formatTime(duration)}`}
+                    aria-label={d.meditations.player.position}
+                    aria-valuetext={`${formatTime(time)} / ${formatTime(duration)}`}
                   />
                   <div className="mt-2 flex items-center justify-between text-xs tabular-nums text-muted-foreground">
                     <span>{formatTime(time)}</span>
@@ -331,14 +386,14 @@ export function Meditations() {
                     variant="outline"
                     size="icon"
                     onClick={() => skip(-10)}
-                    aria-label="Retroceder diez segundos"
+                    aria-label={d.meditations.player.rewind}
                     className="size-11 rounded-full border-border/80 text-muted-foreground hover:text-foreground"
                   >
                     <Rewind className="size-5" aria-hidden="true" />
                   </Button>
                   <Button
                     onClick={togglePlay}
-                    aria-label={playing ? 'Pausar' : 'Reproducir'}
+                    aria-label={playing ? d.meditations.player.pause : d.meditations.player.play}
                     className="size-14 rounded-full bg-sage text-primary-foreground shadow-lg shadow-sage/25 transition-all hover:opacity-90 hover:shadow-xl"
                   >
                     {playing ? (
@@ -351,7 +406,7 @@ export function Meditations() {
                     variant="outline"
                     size="icon"
                     onClick={() => skip(10)}
-                    aria-label="Avanzar diez segundos"
+                    aria-label={d.meditations.player.forward}
                     className="size-11 rounded-full border-border/80 text-muted-foreground hover:text-foreground"
                   >
                     <FastForward className="size-5" aria-hidden="true" />
@@ -360,7 +415,7 @@ export function Meditations() {
                     variant="outline"
                     size="sm"
                     onClick={() => setRateIndex((i) => (i + 1) % RATES.length)}
-                    aria-label={`Velocidad de reproducción: ${rate} veces. Pulsar para cambiar`}
+                    aria-label={d.meditations.player.speed(rate)}
                     className="h-11 min-w-16 rounded-full border-border/80 px-3 font-serif text-sm font-semibold text-muted-foreground hover:text-foreground"
                   >
                     {rate === 1 ? '1×' : `${rate}×`}
@@ -378,9 +433,7 @@ export function Meditations() {
               <Button
                 onClick={playBell}
                 aria-label={
-                  bellPlaying
-                    ? 'Silenciar la campana de presencia'
-                    : 'Tocar la campana de presencia'
+                  bellPlaying ? d.meditations.bell.stop : d.meditations.bell.play
                 }
                 aria-pressed={bellPlaying}
                 className={`grid size-16 shrink-0 place-items-center rounded-full border transition-all ${
@@ -410,12 +463,10 @@ export function Meditations() {
               </Button>
               <div>
                 <h3 className="font-serif text-xl font-medium">
-                  Campana de presencia
+                  {d.meditations.bell.title}
                 </h3>
                 <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">
-                  Tócala cuando te sorprendas lejos del presente: deja que su
-                  resonancia te traiga de vuelta, AQUÍ y AHORA. Deja que suene
-                  completa, sin prisa por volver a nada.
+                  {d.meditations.bell.description}
                 </p>
               </div>
             </CardContent>
@@ -430,10 +481,7 @@ export function Meditations() {
         preload="metadata"
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
-        onEnded={() => {
-          setPlaying(false)
-          setTime(0)
-        }}
+        onEnded={handleEnded}
         onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
         onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
         onSeeked={(e) => setTime(e.currentTarget.currentTime)}

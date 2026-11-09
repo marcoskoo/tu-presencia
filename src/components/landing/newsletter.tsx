@@ -7,8 +7,10 @@ import { Input } from '@/components/ui/input'
 import { useToast } from '@/hooks/use-toast'
 import { FadeIn } from '@/components/landing/section-header'
 import { EnsoMark } from '@/components/landing/enso-logo'
+import { useI18n } from '@/lib/i18n/context'
 
 export function Newsletter() {
+  const { d } = useI18n()
   const { toast } = useToast()
   const [email, setEmail] = React.useState('')
   const [submitting, setSubmitting] = React.useState(false)
@@ -25,17 +27,17 @@ export function Newsletter() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Error')
       toast({
-        title: 'Bienvenido al círculo',
+        title: d.newsletter.toastOk,
         description: data.message,
       })
       setEmail('')
     } catch (err) {
       toast({
-        title: 'No pudimos completar tu suscripción',
+        title: d.newsletter.toastError,
         description:
           err instanceof Error && err.message !== 'Error'
             ? err.message
-            : 'Introduce un correo válido e inténtalo de nuevo.',
+            : d.newsletter.toastErrorHint,
         variant: 'destructive',
       })
     } finally {
@@ -46,7 +48,7 @@ export function Newsletter() {
   return (
     <section
       id="circulo"
-      aria-label="Únete al círculo de consciencia"
+      aria-label={d.newsletter.sectionLabel}
       className="scroll-mt-20 pb-24 pt-4 sm:pb-28"
     >
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-6">
@@ -67,15 +69,13 @@ export function Newsletter() {
 
             <div className="relative mx-auto max-w-xl">
               <p className="text-xs font-medium uppercase tracking-[0.32em] text-primary-foreground/80">
-                Una carta semanal
+                {d.newsletter.eyebrow}
               </p>
               <h2 className="mt-4 font-serif text-3xl font-medium leading-tight text-balance sm:text-4xl">
-                Únete al círculo de consciencia
+                {d.newsletter.title}
               </h2>
               <p className="mt-5 text-sm leading-relaxed text-primary-foreground/85 sm:text-base">
-                Cada semana compartimos una práctica, una reflexión y un motivo
-                para volver al presente. Sin ruido, sin prisa: solo presencia en
-                tu bandeja de entrada.
+                {d.newsletter.description}
               </p>
 
               <form
@@ -92,8 +92,8 @@ export function Newsletter() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="tu-correo@ejemplo.com"
-                    aria-label="Tu correo electrónico"
+                    placeholder={d.newsletter.placeholder}
+                    aria-label={d.newsletter.emailLabel}
                     className="h-12 rounded-full border-white/25 bg-white/15 pl-11 text-primary-foreground placeholder:text-primary-foreground/55 backdrop-blur focus-visible:ring-white/60"
                   />
                 </div>
@@ -105,18 +105,18 @@ export function Newsletter() {
                   {submitting ? (
                     <>
                       <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                      Uniendo…
+                      {d.newsletter.sending}
                     </>
                   ) : (
                     <>
                       <Send className="size-4" aria-hidden="true" />
-                      Unirme al círculo
+                      {d.newsletter.cta}
                     </>
                   )}
                 </Button>
               </form>
               <p className="mt-4 text-xs text-primary-foreground/70">
-                Respetamos tu calma: puedes salir del círculo cuando quieras.
+                {d.newsletter.calm}
               </p>
             </div>
           </div>

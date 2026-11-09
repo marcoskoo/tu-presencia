@@ -12,6 +12,12 @@ const path = require('path')
 
 const { MEDITATIONS } = require('./meditations-data')
 
+// Filtro opcional por id: `node generate-meditations.js caminando yoga-nidra`
+const FILTER_IDS = process.argv.slice(2)
+const SELECTED = FILTER_IDS.length
+  ? MEDITATIONS.filter((m) => FILTER_IDS.includes(m.id))
+  : MEDITATIONS
+
 const BUILD = path.join(__dirname, 'build')
 const SEG_DIR = path.join(BUILD, 'segments')
 const PIECE_DIR = path.join(BUILD, 'pieces')
@@ -92,11 +98,11 @@ async function main() {
 
   // 1) Generar todos los segmentos de voz (con reanudación)
   let total = 0
-  for (const med of MEDITATIONS) total += med.segments.length
+  for (const med of SELECTED) total += med.segments.length
 
   let done = 0
   const failed = new Set()
-  for (const med of MEDITATIONS) {
+  for (const med of SELECTED) {
     for (let i = 0; i < med.segments.length; i++) {
       const segPath = path.join(SEG_DIR, `${med.id}-${String(i).padStart(2, '0')}.wav`)
       if (!fs.existsSync(segPath)) {
@@ -136,7 +142,7 @@ async function main() {
   }
 
   // 3) Ensamblar cada meditación (solo si todos sus segmentos existen)
-  for (const med of MEDITATIONS) {
+  for (const med of SELECTED) {
     if (failed.has(med.id)) {
       console.log(`✗ ${med.id}: omitida por fallos de TTS`)
       continue

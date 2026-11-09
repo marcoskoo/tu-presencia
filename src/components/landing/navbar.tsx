@@ -3,8 +3,14 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { useTheme } from 'next-themes'
-import { Menu, Moon, Sparkles, Sun, Wind } from 'lucide-react'
+import { Check, Clock3, Download, Languages, Menu, Moon, Sparkles, Sun, Wind } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import {
   Sheet,
   SheetContent,
@@ -13,32 +19,42 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { EnsoMark } from '@/components/landing/enso-logo'
+import { LANGS, useI18n } from '@/lib/i18n/context'
+import { usePwaInstall } from '@/components/pwa/use-install'
 
-const NAV_LINKS = [
-  { href: '#practicas', label: 'Prácticas' },
-  { href: '#respiracion', label: 'Respiración' },
-  { href: '#meditaciones', label: 'Meditaciones' },
-  { href: '#temas', label: 'Temas' },
-  { href: '#comunidad', label: 'Comunidad' },
-]
+export const PAUSE_OPEN_EVENT = 'presencia:pause-open'
 
 export function Navbar() {
+  const { d, lang, setLang } = useI18n()
   const [mounted, setMounted] = React.useState(false)
   const [open, setOpen] = React.useState(false)
   const { theme, setTheme } = useTheme()
+  const { canInstall, installed, promptInstall } = usePwaInstall()
 
   React.useEffect(() => setMounted(true), [])
+
+  const navLinks = [
+    { href: '#practicas', label: d.nav.practices },
+    { href: '#respiracion', label: d.nav.breathing },
+    { href: '#meditaciones', label: d.nav.meditations },
+    { href: '#santuario', label: d.nav.sanctuary },
+    { href: '#temas', label: d.nav.topics },
+    { href: '#tradiciones', label: d.nav.traditions },
+    { href: '#comunidad', label: d.nav.community },
+  ]
+
+  const openPause = () => window.dispatchEvent(new CustomEvent(PAUSE_OPEN_EVENT))
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <nav
-        aria-label="Navegación principal"
+        aria-label={d.nav.mainNav}
         className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6"
       >
         <Link
           href="#inicio"
           className="group flex items-center gap-2.5"
-          aria-label="Presencia AQUÍ y AHORA · inicio"
+          aria-label={d.nav.home}
         >
           <span className="text-sage transition-transform duration-500 group-hover:rotate-45">
             <EnsoMark className="size-7" />
@@ -48,13 +64,13 @@ export function Navbar() {
               AQUÍ <span className="text-gold">y</span> AHORA
             </span>
             <span className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
-              espacio de consciencia
+              {d.nav.brandTagline}
             </span>
           </span>
         </Link>
 
-        <div className="hidden items-center gap-7 md:flex">
-          {NAV_LINKS.map((link) => (
+        <div className="hidden items-center gap-6 xl:flex">
+          {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -65,14 +81,58 @@ export function Navbar() {
           ))}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          {canInstall && !installed ? (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={promptInstall}
+              aria-label={d.pwa.install}
+              title={d.pwa.install}
+              className="hidden text-muted-foreground hover:text-foreground sm:inline-flex"
+            >
+              <Download className="size-[18px]" />
+            </Button>
+          ) : null}
+
+          {/* Selector de idioma */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                aria-label={d.nav.language}
+                className="h-9 gap-1.5 px-2.5 text-muted-foreground hover:text-foreground"
+              >
+                <Languages className="size-[18px]" aria-hidden="true" />
+                <span className="text-xs font-semibold tracking-wider">
+                  {LANGS.find((l) => l.code === lang)?.short ?? 'ES'}
+                </span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-36">
+              {LANGS.map((l) => (
+                <DropdownMenuItem
+                  key={l.code}
+                  onClick={() => setLang(l.code)}
+                  aria-checked={lang === l.code}
+                  className="gap-2"
+                >
+                  <Check
+                    className={`size-4 ${lang === l.code ? 'opacity-100' : 'opacity-0'}`}
+                    aria-hidden="true"
+                  />
+                  {l.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <Button
             variant="ghost"
             size="icon"
             aria-label={
-              mounted && theme === 'dark'
-                ? 'Activar modo amanecer'
-                : 'Activar modo noche'
+              mounted && theme === 'dark' ? d.nav.themeLight : d.nav.themeDark
             }
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="text-muted-foreground hover:text-foreground"
@@ -85,13 +145,24 @@ export function Navbar() {
           </Button>
 
           <Button
+            onClick={openPause}
+            size="sm"
+            aria-label={d.nav.pause3}
+            title={d.nav.pause3}
+            className="hidden rounded-full border-gold/40 bg-gold/10 px-3.5 font-medium text-gold shadow-none transition-all hover:bg-gold/20 hover:text-gold sm:inline-flex"
+          >
+            <Clock3 className="size-4" aria-hidden="true" />
+            <span className="hidden lg:inline">{d.nav.pause3}</span>
+          </Button>
+
+          <Button
             asChild
             size="sm"
-            className="hidden rounded-full bg-sage px-5 font-medium text-primary-foreground shadow-sm transition-all hover:opacity-90 hover:shadow-md sm:inline-flex"
+            className="rounded-full bg-sage px-5 font-medium text-primary-foreground shadow-sm transition-all hover:opacity-90 hover:shadow-md"
           >
             <Link href="#respiracion">
               <Wind className="size-4" aria-hidden="true" />
-              Respirar ahora
+              <span className="hidden md:inline">{d.nav.breatheNow}</span>
             </Link>
           </Button>
 
@@ -100,13 +171,13 @@ export function Navbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="md:hidden"
-                aria-label="Abrir menú de navegación"
+                className="xl:hidden"
+                aria-label={d.nav.menuOpen}
               >
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72">
+            <SheetContent side="right" className="w-72 overflow-y-auto">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2 text-left">
                   <span className="text-sage">
@@ -116,10 +187,10 @@ export function Navbar() {
                 </SheetTitle>
               </SheetHeader>
               <nav
-                aria-label="Navegación móvil"
+                aria-label={d.nav.mobileNav}
                 className="flex flex-col gap-1 px-4"
               >
-                {NAV_LINKS.map((link) => (
+                {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -129,15 +200,47 @@ export function Navbar() {
                     {link.label}
                   </Link>
                 ))}
-                <Button
-                  asChild
-                  className="mt-4 rounded-full bg-sage font-medium text-primary-foreground"
+                <Link
+                  href="#premium"
+                  onClick={() => setOpen(false)}
+                  className="rounded-lg px-3 py-3 text-base font-medium text-gold transition-colors hover:bg-gold/10"
                 >
-                  <Link href="#respiracion" onClick={() => setOpen(false)}>
-                    <Sparkles className="size-4" aria-hidden="true" />
-                    Respirar ahora
-                  </Link>
-                </Button>
+                  {d.nav.premium}
+                </Link>
+                <div className="mt-2 flex flex-col gap-2 border-t border-border/60 pt-4">
+                  <Button
+                    onClick={() => {
+                      setOpen(false)
+                      openPause()
+                    }}
+                    className="rounded-full border-gold/40 bg-gold/10 font-medium text-gold hover:bg-gold/20 hover:text-gold"
+                  >
+                    <Clock3 className="size-4" aria-hidden="true" />
+                    {d.nav.pause3}
+                  </Button>
+                  {canInstall && !installed ? (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setOpen(false)
+                        promptInstall()
+                      }}
+                      className="rounded-full font-medium"
+                    >
+                      <Download className="size-4" aria-hidden="true" />
+                      {d.pwa.install}
+                    </Button>
+                  ) : null}
+                  <Button
+                    asChild
+                    className="rounded-full bg-sage font-medium text-primary-foreground"
+                  >
+                    <Link href="#respiracion" onClick={() => setOpen(false)}>
+                      <Sparkles className="size-4" aria-hidden="true" />
+                      {d.nav.breatheNow}
+                    </Link>
+                  </Button>
+                </div>
               </nav>
             </SheetContent>
           </Sheet>
