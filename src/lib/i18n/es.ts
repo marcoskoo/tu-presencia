@@ -68,7 +68,7 @@ export const es = {
     ctaPrimary: 'Respirar ahora',
     ctaSecondary: 'Explorar las prácticas',
     chips: [
-      'Meditación guiada',
+      'Melodías de meditación',
       'Presencia consciente',
       'Respiración',
       'Audio con campanas',
@@ -215,14 +215,14 @@ export const es = {
   },
 
   meditations: {
-    eyebrow: 'Meditaciones guiadas con audio',
+    eyebrow: 'Melodías de meditación con audio',
     titleA: 'Escucha, respira,',
     titleB: 'regresa',
     description:
-      'Meditaciones guiadas con voz suave y campanas tibetanas. Elige una, ponte los auriculares y deja que la voz te acompañe de vuelta al presente.',
-    listLabel: 'Lista de meditaciones guiadas',
+      'Melodías serenas de meditación con cuencos y campanas tibetanas. Elige una, ponte los auriculares y deja que la música te acompañe de vuelta al presente.',
+    listLabel: 'Lista de melodías de meditación',
     tip: 'Consejo: busca un lugar tranquilo, usa auriculares si puedes y deja el móvil en silencio. Este es tu momento.',
-    sectionLabel: 'Meditaciones guiadas con audio',
+    sectionLabel: 'Melodías de meditación con audio',
     player: {
       position: 'Posición de la meditación',
       rewind: 'Retroceder diez segundos',
@@ -254,7 +254,7 @@ export const es = {
         tag: 'Relajación',
         duration: '≈ 5 min',
         description:
-          'Un recorrido amable por todo el cuerpo, de los pies a la cabeza, para soltar tensiones y descansar en la quietud.',
+          'Una melodía cálida y lenta para recorrer el cuerpo de los pies a la cabeza y soltar tensiones en la quietud.',
       },
       dormir: {
         title: 'Calma profunda para dormir',
@@ -275,21 +275,21 @@ export const es = {
         tag: 'En movimiento',
         duration: '≈ 9 min',
         description:
-          'Una guía para escuchar mientras caminas: pasos, aliento y sentidos convertidos en meditación en movimiento.',
+          'Una melodía serena que acompaña tus pasos y convierte el paseo en meditación en movimiento.',
       },
       yogaNidra: {
         title: 'Yoga nidra · Relajación profunda',
         tag: 'Descanso profundo',
         duration: '≈ 9 min',
         description:
-          'El sueño yoguico: tumbado y con la mente despierta, recorre el cuerpo entero y descansa como pocas veces.',
+          'El sueño yoguico: tumbado y con la mente despierta, deja que la melodía te lleve a un descanso profundo.',
       },
       extendida: {
         title: 'Retiro breve · Presencia extendida',
         tag: 'Silencio',
         duration: '≈ 16 min',
         description:
-          'Veinte minutos de presencia esencial con largos silencios: la práctica insignia de Presencia+.',
+          'Dieciséis minutos de presencia esencial: melodía muy serena y largos silencios. La práctica insignia de Presencia+.',
       },
     },
   },
@@ -509,7 +509,7 @@ export const es = {
           {
             name: 'Meditación caminando',
             description:
-              'Cada paso, un lugar de llegada. La guía completa de audio te espera en el santuario.',
+              'Cada paso, un lugar de llegada. La melodía completa de audio te espera en el santuario.',
             tool: 'walking',
           },
           {
@@ -666,11 +666,11 @@ export const es = {
     },
     walking: {
       name: 'Meditación caminando',
-      short: 'Guía de audio para practicar en movimiento.',
+      short: 'Melodía serena para practicar en movimiento.',
     },
     nidra: {
       name: 'Yoga nidra',
-      short: 'Relajación profunda guiada, tumbado y despierto.',
+      short: 'Relajación profunda con melodía, tumbado y despierto.',
     },
     mantra: {
       name: 'Mantras y mala digital',
@@ -743,8 +743,8 @@ export const es = {
   walking: {
     title: 'Meditación caminando',
     intro:
-      'Ponte los auriculares, elige un lugar tranquilo y seguro, y deja que la voz te acompañe mientras caminas.',
-    audioMode: 'Guía de audio completa',
+      'Ponte los auriculares, elige un lugar tranquilo y seguro, y deja que la melodía te acompañe mientras caminas.',
+    audioMode: 'Melodía completa',
     bellMode: 'Solo campanas',
     bellEvery: 'Campana cada',
     whileWalking: 'Mientras caminas',
@@ -754,8 +754,8 @@ export const es = {
       'Sincroniza el aliento con el paso: dos pasos para inhalar, dos para exhalar.',
       'Abre los sentidos: viento, aromas, sonidos. El mundo camina contigo.',
     ],
-    playGuide: 'Escuchar la guía',
-    pauseGuide: 'Pausar la guía',
+    playGuide: 'Escuchar la melodía',
+    pauseGuide: 'Pausar la melodía',
   },
 
   nidra: {
@@ -767,8 +767,8 @@ export const es = {
       'No luchas contra el sueño: si llegas a dormirte, también descansas.',
       'Formula una intención breve antes de empezar: la repetirás durante la práctica.',
     ],
-    listen: 'Escuchar la guía completa',
-    pause: 'Pausar la guía',
+    listen: 'Escuchar la melodía completa',
+    pause: 'Pausar la melodía',
   },
 
   mantra: {
@@ -972,7 +972,7 @@ export const es = {
     clear: 'Borrar mi registro',
     confirmClear: '¿Borrar todo el registro de práctica? Esta acción no se puede deshacer.',
     types: {
-      meditation: 'Meditación guiada',
+      meditation: 'Meditación con melodía',
       timer: 'Silencio con temporizador',
       breathing: 'Respiración consciente',
       walking: 'Meditación caminando',
@@ -1014,7 +1014,7 @@ export const es = {
     freePrice: 'Gratis',
     freeDesc: 'Todo lo esencial para empezar y sostener una práctica.',
     freeFeatures: [
-      '7 meditaciones guiadas con audio',
+      '7 melodías de meditación',
       'Respiración guiada con 7 técnicas',
       'Temporizador de hasta 30 minutos',
       'Mala digital, diario, oráculo y sonidos',

@@ -1,10 +1,13 @@
 /**
- * Pipeline de meditaciones guiadas:
- * 1. TTS por segmento (voz chuichui, velocidad 0.75 — pausas naturales largas)
- * 2. Recorte de silencios + pulido cálido por segmento:
- *    - EQ: suaviza la banda dura 4.7 kHz, calienta graves, quita aire estridente
- *    - loudnorm: nivel parejo y suave (-19 LUFS) en segmentos >= 2.5 s
- * 3. Ensamblado: campana inicial (-3 dB, más dulce) + segmentos + pausas + campana final (-3 dB)
+ * Pipeline de meditaciones GUIADAS CON VOZ (TTS) — EN DESUSO para la app.
+ * A petición del usuario, las pistas de public/audios son ahora melodías
+ * instrumentales sin voz: ver make-melodies.py (el generador actual).
+ * Este archivo queda como referencia por si se quiere volver a tener voz.
+ *
+ * Pipeline original:
+ * 1. TTS por segmento (voz chuichui, velocidad 0.75) con reanudación y reintentos
+ * 2. Recorte de silencios + pulido cálido por segmento
+ * 3. Ensamblado: campana inicial + segmentos + pausas + campana final
  * 4. Codificación MP3 en public/audios/
  */
 const ZAI = require('z-ai-web-dev-sdk').default

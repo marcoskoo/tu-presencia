@@ -68,7 +68,7 @@ export const pt: Dict = {
     ctaPrimary: 'Respirar agora',
     ctaSecondary: 'Explorar as práticas',
     chips: [
-      'Meditação guiada',
+      'Melodias de meditação',
       'Presença consciente',
       'Respiração',
       'Áudio com sinos',
@@ -215,14 +215,14 @@ export const pt: Dict = {
   },
 
   meditations: {
-    eyebrow: 'Meditações guiadas com áudio',
+    eyebrow: 'Melodias de meditação com áudio',
     titleA: 'Escute, respire,',
     titleB: 'volte',
     description:
-      'Meditações guiadas com voz suave e sinos tibetanos. Escolha uma, coloque os fones e deixe a voz acompanhá-lo de volta ao presente.',
-    listLabel: 'Lista de meditações guiadas',
+      'Melodias serenas de meditação com tigelas e sinos tibetanos. Escolha uma, coloque os fones e deixe a música acompanhá-lo de volta ao presente.',
+    listLabel: 'Lista de melodias de meditação',
     tip: 'Dica: procure um lugar tranquilo, use fones se puder e deixe o celular em silêncio. Este é o seu momento.',
-    sectionLabel: 'Meditações guiadas com áudio',
+    sectionLabel: 'Melodias de meditação com áudio',
     player: {
       position: 'Posição da meditação',
       rewind: 'Voltar dez segundos',
@@ -254,7 +254,7 @@ export const pt: Dict = {
         tag: 'Relaxamento',
         duration: '≈ 5 min',
         description:
-          'Um percurso gentil por todo o corpo, dos pés à cabeça, para soltar tensões e descansar na quietude.',
+          'Uma melodia cálida e lenta para percorrer o corpo dos pés à cabeça e soltar tensões na quietude.',
       },
       dormir: {
         title: 'Calma profunda para dormir',
@@ -275,21 +275,21 @@ export const pt: Dict = {
         tag: 'Em movimento',
         duration: '≈ 9 min',
         description:
-          'Um guia para ouvir enquanto caminha: passos, alento e sentidos transformados em meditação em movimento.',
+          'Uma melodia serena que acompanha seus passos e transforma o passeio em meditação em movimento.',
       },
       yogaNidra: {
         title: 'Yoga nidra · Relaxamento profundo',
         tag: 'Descanso profundo',
         duration: '≈ 9 min',
         description:
-          'O sono yogue: deitado e com a mente desperta, percorra o corpo inteiro e descanse como poucas vezes.',
+          'O sono yogue: deitado e com a mente desperta, deixe a melodia levá-lo a um descanso profundo.',
       },
       extendida: {
         title: 'Retiro breve · Presença estendida',
         tag: 'Silêncio',
         duration: '≈ 16 min',
         description:
-          'Vinte minutos de presença essencial com longos silêncios: a prática insignia da Presença+.',
+          'Dezesseis minutos de presença essencial: melodia muito serena e longos silêncios. A prática insignia da Presença+.',
       },
     },
   },
@@ -508,7 +508,7 @@ export const pt: Dict = {
           {
             name: 'Meditação caminhando',
             description:
-              'Cada passo, um lugar de chegada. O guia completo em áudio espera por você no santuário.',
+              'Cada passo, um lugar de chegada. A melodia completa espera por você no santuário.',
             tool: 'walking',
           },
           {
@@ -665,11 +665,11 @@ export const pt: Dict = {
     },
     walking: {
       name: 'Meditação caminhando',
-      short: 'Guia de áudio para praticar em movimento.',
+      short: 'Melodia serena para praticar em movimento.',
     },
     nidra: {
       name: 'Yoga nidra',
-      short: 'Relaxamento profundo guiado, deitado e desperto.',
+      short: 'Relaxamento profundo com melodia, deitado e desperto.',
     },
     mantra: {
       name: 'Mantras e mala digital',
@@ -742,8 +742,8 @@ export const pt: Dict = {
   walking: {
     title: 'Meditação caminhando',
     intro:
-      'Coloque os fones, escolha um lugar tranquilo e seguro, e deixe a voz acompanhá-lo enquanto caminha.',
-    audioMode: 'Guia de áudio completo',
+      'Coloque os fones, escolha um lugar tranquilo e seguro, e deixe a melodia acompanhá-lo enquanto caminha.',
+    audioMode: 'Melodia completa',
     bellMode: 'Só sinos',
     bellEvery: 'Sino a cada',
     whileWalking: 'Enquanto você caminha',
@@ -753,8 +753,8 @@ export const pt: Dict = {
       'Sincronize o alento com o passo: dois passos para inspirar, dois para expirar.',
       'Abra os sentidos: vento, aromas, sons. O mundo caminha com você.',
     ],
-    playGuide: 'Ouvir o guia',
-    pauseGuide: 'Pausar o guia',
+    playGuide: 'Ouvir a melodia',
+    pauseGuide: 'Pausar a melodia',
   },
 
   nidra: {
@@ -766,8 +766,8 @@ export const pt: Dict = {
       'Não lute contra o sono: se adormecer, você também está descansando.',
       'Formule uma intenção breve antes de começar: você a repetirá durante a prática.',
     ],
-    listen: 'Ouvir o guia completo',
-    pause: 'Pausar o guia',
+    listen: 'Ouvir a melodia completa',
+    pause: 'Pausar a melodia',
   },
 
   mantra: {
@@ -971,7 +971,7 @@ export const pt: Dict = {
     clear: 'Apagar meu registro',
     confirmClear: 'Apagar todo o registro de prática? Esta ação não pode ser desfeita.',
     types: {
-      meditation: 'Meditação guiada',
+      meditation: 'Meditação com melodia',
       timer: 'Meditação em silêncio',
       breathing: 'Respiração consciente',
       walking: 'Meditação caminhando',
@@ -1013,7 +1013,7 @@ export const pt: Dict = {
     freePrice: 'Grátis',
     freeDesc: 'Tudo o que é essencial para começar e sustentar uma prática.',
     freeFeatures: [
-      '7 meditações guiadas com áudio',
+      '7 melodias de meditação',
       'Respiração guiada com 7 técnicas',
       'Temporizador de até 30 minutos',
       'Mala digital, diário, oráculo e sons',

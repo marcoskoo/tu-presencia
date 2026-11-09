@@ -8,7 +8,7 @@ import { useI18n } from '@/lib/i18n/context'
 import { logPractice } from '@/lib/practice-log'
 import { cn } from '@/lib/utils'
 
-/** Yoga nidra: reproductor de la guía de relajación profunda */
+/** Yoga nidra: reproductor de la melodía de relajación profunda */
 export function NidraTool() {
   const { d } = useI18n()
   const audioRef = React.useRef<HTMLAudioElement | null>(null)

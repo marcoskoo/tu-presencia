@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 
 const BELL_INTERVALS = [30, 60, 120]
 
-/** Herramienta de meditación caminando: guía de audio o modo solo campanas */
+/** Herramienta de meditación caminando: melodía de fondo o modo solo campanas */
 export function WalkingTool() {
   const { d } = useI18n()
   const audioRef = React.useRef<HTMLAudioElement | null>(null)
