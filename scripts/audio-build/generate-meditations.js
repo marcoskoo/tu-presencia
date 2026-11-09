@@ -1,8 +1,10 @@
 /**
  * Pipeline de meditaciones guiadas:
- * 1. TTS por segmento (voz tongtong, velocidad 0.8) con reanudación y reintentos
- * 2. Recorte de silencios de borde de cada segmento
- * 3. Ensamblado: campana inicial + segmentos + pausas + campana final
+ * 1. TTS por segmento (voz chuichui, velocidad 0.75 — pausas naturales largas)
+ * 2. Recorte de silencios + pulido cálido por segmento:
+ *    - EQ: suaviza la banda dura 4.7 kHz, calienta graves, quita aire estridente
+ *    - loudnorm: nivel parejo y suave (-19 LUFS) en segmentos >= 2.5 s
+ * 3. Ensamblado: campana inicial (-3 dB, más dulce) + segmentos + pausas + campana final (-3 dB)
  * 4. Codificación MP3 en public/audios/
  */
 const ZAI = require('z-ai-web-dev-sdk').default
@@ -23,8 +25,12 @@ const SEG_DIR = path.join(BUILD, 'segments')
 const PIECE_DIR = path.join(BUILD, 'pieces')
 const OUT_DIR = '/home/z/my-project/public/audios'
 
-const VOICE = 'tongtong'
-const SPEED = 0.8
+// Voz y ritmo — ver scripts/audio-build/voice-matrix-v2 y duelo para la evaluación.
+// chuichui: mejor español disponible (57-61% ASR) y a 0.75 desarrolla pausas
+// meditativas naturales (60% de silencio intra-segmento). Para volver a la voz
+// anterior: VOICE='tongtong', SPEED=0.8.
+const VOICE = 'chuichui'
+const SPEED = 0.75
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -52,6 +58,48 @@ function trimSegment(src, dst) {
       'areverse',
     '-ar', '24000', '-ac', '1', '-c:a', 'pcm_s16le', dst,
   ])
+}
+
+/**
+ * Pulido cálido-relajante de un segmento de voz ya recortado:
+ *  - igual que antes recorta bordes, y además:
+ *  - -3.5 dB en la banda 4.7 kHz (dureza/sibilancia, timbre "infantil" de la voz)
+ *  - lowpass 10.5 kHz (quita aire estridente; el contenido útil del habla queda intacto)
+ *  - +2 dB de estante de graves bajo 230 Hz (calidez de pecho)
+ *  - highpass 70 Hz (limpia rumble)
+ * Luego, si el segmento dura >= 2.5 s, loudnorm a -19 LUFS (nivel suave y parejo).
+ */
+function polishSegment(src, dst) {
+  const tmp = dst + '.tmp.wav'
+  sh('ffmpeg', [
+    '-y', '-i', src,
+    '-af',
+    'silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.15,' +
+      'areverse,' +
+      'silenceremove=start_periods=1:start_threshold=-45dB:start_silence=0.3,' +
+      'areverse,' +
+      'equalizer=f=4700:width_type=o:w=1.1:g=-3.5,' +
+      'lowpass=f=10500,' +
+      'bass=g=2:f=230,' +
+      'highpass=f=70',
+    '-ar', '24000', '-ac', '1', '-c:a', 'pcm_s16le', tmp,
+  ])
+  const dur = ffprobeDuration(tmp)
+  if (dur >= 2.5) {
+    sh('ffmpeg', [
+      '-y', '-i', tmp,
+      '-af', 'loudnorm=I=-19:TP=-2.0:LRA=11',
+      '-ar', '24000', '-ac', '1', '-c:a', 'pcm_s16le', dst,
+    ])
+  } else {
+    // segmento muy corto: loudnorm no mide bien; solo EQ + retoque de nivel
+    sh('ffmpeg', [
+      '-y', '-i', tmp,
+      '-af', 'volume=-1.5dB',
+      '-ar', '24000', '-ac', '1', '-c:a', 'pcm_s16le', dst,
+    ])
+  }
+  fs.unlinkSync(tmp)
 }
 
 function makeSilence(dst, seconds) {
@@ -121,14 +169,14 @@ async function main() {
     }
   }
 
-  // 2) Preparar piezas fijas
+  // 2) Preparar piezas fijas — campanas atenuadas 3 dB para no sobresaltar
   const bellStart = path.join(BUILD, 'bell-start-24k.wav')
   const bellEnd = path.join(BUILD, 'bell-end-24k.wav')
   const bellDing = path.join(BUILD, 'bell-ding-24k.wav')
-  convertTo24k(path.join(__dirname, 'bell-start.wav'), bellStart)
-  convertTo24k(path.join(__dirname, 'bell-end.wav'), bellEnd)
+  convertTo24k(path.join(__dirname, 'bell-start.wav'), bellStart, ['-af', 'volume=-3dB'])
+  convertTo24k(path.join(__dirname, 'bell-end.wav'), bellEnd, ['-af', 'volume=-3dB'])
   // "Ding" corto: primeros 3.5 s de la campana final con fundido
-  convertTo24k(path.join(__dirname, 'bell-end.wav'), bellDing, ['-t', '3.5', '-af', 'afade=t=out:st=2.3:d=1.2'])
+  convertTo24k(path.join(__dirname, 'bell-end.wav'), bellDing, ['-t', '3.5', '-af', 'afade=t=out:st=2.3:d=1.2,volume=-3dB'])
 
   const silences = new Map()
   function silenceFile(seconds) {
@@ -159,7 +207,7 @@ async function main() {
 
     for (let i = 0; i < med.segments.length; i++) {
       const trimmed = path.join(PIECE_DIR, `${med.id}-${String(i).padStart(2, '0')}-trim.wav`)
-      trimSegment(path.join(SEG_DIR, `${med.id}-${String(i).padStart(2, '0')}.wav`), trimmed)
+      polishSegment(path.join(SEG_DIR, `${med.id}-${String(i).padStart(2, '0')}.wav`), trimmed)
       lines.push(`file '${trimmed}'`)
       lines.push(`file '${silenceFile(med.segments[i].pause)}'`)
     }
@@ -182,8 +230,9 @@ async function main() {
   }
 
   // 4) Campana de presencia (interactiva) y ding de fase
+  //    La campana larga se atenúa 3 dB (suena tras estados de calma; que no sobresalte)
   const bellOut = path.join(OUT_DIR, 'campana-presencia.mp3')
-  sh('ffmpeg', ['-y', '-i', path.join(__dirname, 'bell-presence.wav'), '-codec:a', 'libmp3lame', '-b:a', '96k', '-ar', '24000', '-ac', '1', bellOut])
+  sh('ffmpeg', ['-y', '-i', path.join(__dirname, 'bell-presence.wav'), '-af', 'volume=-3dB', '-codec:a', 'libmp3lame', '-b:a', '96k', '-ar', '24000', '-ac', '1', bellOut])
   console.log(`✓ campana-presencia.mp3: ${ffprobeDuration(bellOut).toFixed(1)}s`)
 
   const dingOut = path.join(OUT_DIR, 'ding-fase.mp3')

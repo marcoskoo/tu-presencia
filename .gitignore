@@ -30,7 +30,10 @@ skills/
 scripts/audio-build/build/
 scripts/audio-build/tts/
 scripts/audio-build/voice-matrix/
+scripts/audio-build/voice-matrix-v2/
+scripts/audio-build/duelo/
 scripts/audio-build/*.wav
+scripts/audio-build/*.log
 
 # varios
 *.tsbuildinfo
