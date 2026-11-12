@@ -652,9 +652,13 @@ export const pt: Dict = {
     titleA: 'O',
     titleB: 'santuário',
     description:
-      'Nove práticas interativas para acompanhá-lo em qualquer momento do dia: temporizador, sons, malas, oráculo e mais. Tudo acontece no seu navegador, no seu ritmo.',
+      'Dez práticas interativas para acompanhá-lo em qualquer momento do dia: diálogo contemplativo com IA, temporizador, sons, malas, oráculo e mais. Tudo acontece no seu navegador, no seu ritmo.',
     open: (name: string) => `Abrir ${name}`,
     sectionLabel: 'Santuário de prática',
+    companion: {
+      name: 'Diálogo com o silêncio',
+      short: 'Partilha como estás e recebe companhia contemplativa (IA).',
+    },
     timer: {
       name: 'Temporizador de meditação',
       short: 'Silêncio com sinos no início, no fim e entre etapas.',
@@ -1114,6 +1118,47 @@ export const pt: Dict = {
     toastOk: 'Bem-vindo ao círculo',
     toastError: 'Não concluímos sua assinatura',
     toastErrorHint: 'Insira um e-mail válido e tente novamente.',
+  },
+
+  palette: {
+    trigger: 'Abrir a busca da página (Ctrl·⌘ + K)',
+    label: 'Paleta de comandos',
+    placeholder: 'Do que você precisa agora? Digite «meditar», «dormir», «idioma»…',
+    noResults: 'Sem resultados. Tente outra palavra.',
+    groups: {
+      navigate: 'Ir para',
+      meditate: 'Ouvir uma melodia',
+      actions: 'Ações rápidas',
+      language: 'Mudar idioma',
+    },
+    home: 'Início',
+    play: (title: string) => `Ouvir «${title}»`,
+  },
+
+  companion: {
+    greeting:
+      'Olá. Estou aqui, contigo neste instante. Conta-me o que te traz hoje: podes partilhar como te sentes, o que procuras, ou simplesmente saudar o silêncio.',
+    placeholder: 'Escreve com calma o que quiseres partilhar…',
+    send: 'Enviar ao silêncio',
+    thinking: 'O silêncio está a ouvir…',
+    error: 'O diálogo não pôde continuar neste momento.',
+    retry: 'Tenta novamente dentro de um momento',
+    disclaimer:
+      'Um espaço de acompanhamento contemplativo com IA. Não substitui ajuda profissional: se estás a atravessar uma crise, procura apoio de confiança.',
+    suggestions: [
+      'A minha mente não aquietá',
+      'Preciso de calma antes de dormir',
+      'Como começo a meditar?',
+      'Sinto-me sobrecarregado pelo dia',
+    ],
+  },
+
+  notFound: {
+    title: 'Esta página também é impermanente',
+    message:
+      'O que procuravas já não está aqui — ou talvez nunca tenha estado. Respira: tudo o que precisas continua AQUI.',
+    back: 'Voltar ao presente',
+    breathe: 'Fazer uma pausa de 3 minutos',
   },
 
   footer: {

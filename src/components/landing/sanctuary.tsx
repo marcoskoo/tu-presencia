@@ -7,6 +7,7 @@ import {
   Bell,
   BookHeart,
   Footprints,
+  MessagesSquare,
   Sparkles,
   Sunrise,
   Timer,
@@ -32,9 +33,11 @@ import { GratitudeJournal } from '@/components/sanctuary/gratitude-journal'
 import { Oracle } from '@/components/sanctuary/oracle'
 import { Analytics } from '@/components/sanctuary/analytics'
 import { Reminders } from '@/components/sanctuary/reminders'
+import { Companion } from '@/components/sanctuary/companion'
 import { cn } from '@/lib/utils'
 
 type ToolKey =
+  | 'companion'
   | 'timer'
   | 'sounds'
   | 'walking'
@@ -51,6 +54,7 @@ const TOOLS: {
   tint: string
   bg: string
 }[] = [
+  { key: 'companion', icon: MessagesSquare, tint: 'text-sage', bg: 'bg-sage-soft/70 dark:bg-sage-soft/40' },
   { key: 'timer', icon: Timer, tint: 'text-sage', bg: 'bg-sage-soft/70 dark:bg-sage-soft/40' },
   { key: 'sounds', icon: Waves, tint: 'text-terracotta', bg: 'bg-terracotta/10' },
   { key: 'walking', icon: Footprints, tint: 'text-gold', bg: 'bg-gold/10' },
@@ -64,6 +68,8 @@ const TOOLS: {
 
 function ToolContent({ toolKey }: { toolKey: ToolKey }) {
   switch (toolKey) {
+    case 'companion':
+      return <Companion />
     case 'timer':
       return <MeditationTimer />
     case 'sounds':
@@ -97,6 +103,8 @@ export function Sanctuary() {
     if (!hash.startsWith('#santuario-')) return null
     const slug = hash.replace('#santuario-', '')
     const map: Record<string, ToolKey> = {
+      dialogo: 'companion',
+      companion: 'companion',
       timer: 'timer',
       sonidos: 'sounds',
       caminando: 'walking',

@@ -23,6 +23,7 @@ import { useI18n } from '@/lib/i18n/context'
 import { usePremium } from '@/lib/premium'
 import { logPractice } from '@/lib/practice-log'
 import { useToast } from '@/hooks/use-toast'
+import { PLAY_MEDITATION_EVENT } from '@/lib/events'
 
 type MeditationId =
   | 'presencia'
@@ -170,6 +171,26 @@ export function Meditations() {
     setDuration(0)
     loggedRef.current = false
   }
+
+  // Reproducción externa desde la paleta de comandos (presencia:play-meditation)
+  const selectMeditationRef = React.useRef(selectMeditation)
+  React.useEffect(() => {
+    selectMeditationRef.current = selectMeditation
+  })
+
+  React.useEffect(() => {
+    const handler = (e: Event) => {
+      const id = (e as CustomEvent<MeditationId>).detail
+      const m = MEDITATIONS.find((x) => x.id === id)
+      if (!m) return
+      document
+        .getElementById('meditaciones')
+        ?.scrollIntoView({ behavior: 'smooth' })
+      selectMeditationRef.current(m)
+    }
+    window.addEventListener(PLAY_MEDITATION_EVENT, handler)
+    return () => window.removeEventListener(PLAY_MEDITATION_EVENT, handler)
+  }, [])
 
   const skip = (delta: number) => {
     const audio = audioRef.current

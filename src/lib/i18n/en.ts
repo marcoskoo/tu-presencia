@@ -650,9 +650,13 @@ export const en: Dict = {
     titleA: 'The',
     titleB: 'sanctuary',
     description:
-      'Nine interactive practices to accompany you at any moment of the day: timer, sounds, malas, oracle and more. Everything happens in your browser, at your own pace.',
+      'Ten interactive practices to accompany you at any moment of the day: contemplative dialogue with AI, timer, sounds, malas, oracle and more. Everything happens in your browser, at your own pace.',
     open: (name: string) => `Open ${name}`,
     sectionLabel: 'Practice sanctuary',
+    companion: {
+      name: 'Dialogue with the silence',
+      short: 'Share how you are and receive contemplative company (AI).',
+    },
     timer: {
       name: 'Meditation timer',
       short: 'Silence with bells at the start, the end and in between.',
@@ -1107,6 +1111,47 @@ export const en: Dict = {
     toastOk: 'Welcome to the circle',
     toastError: 'We could not complete your subscription',
     toastErrorHint: 'Enter a valid email and try again.',
+  },
+
+  palette: {
+    trigger: 'Open page search (Ctrl·⌘ + K)',
+    label: 'Command palette',
+    placeholder: 'What do you need right now? Type “meditate”, “sleep”, “language”…',
+    noResults: 'No results. Try another word.',
+    groups: {
+      navigate: 'Go to',
+      meditate: 'Listen to a melody',
+      actions: 'Quick actions',
+      language: 'Change language',
+    },
+    home: 'Home',
+    play: (title: string) => `Listen to “${title}”`,
+  },
+
+  companion: {
+    greeting:
+      'Hello. Here I am, with you in this instant. Tell me what brings you today: you can share how you feel, what you are looking for, or simply greet the silence.',
+    placeholder: 'Write calmly whatever you wish to share…',
+    send: 'Send to the silence',
+    thinking: 'The silence is listening…',
+    error: 'The dialogue could not continue right now.',
+    retry: 'Try again in a little while',
+    disclaimer:
+      'A contemplative companionship space powered by AI. It does not replace professional help: if you are going through a crisis, please seek support you can trust.',
+    suggestions: [
+      'My mind will not quiet down',
+      'I need calm before sleep',
+      'How do I start meditating?',
+      'I feel overwhelmed by the day',
+    ],
+  },
+
+  notFound: {
+    title: 'This page is impermanent too',
+    message:
+      'What you were looking for is no longer here — or perhaps it never was. Breathe: everything you need is still HERE.',
+    back: 'Return to the present',
+    breathe: 'Take a 3-minute pause',
   },
 
   footer: {

@@ -653,9 +653,13 @@ export const es = {
     titleA: 'El',
     titleB: 'santuario',
     description:
-      'Nueve prácticas interactivas para acompañarte en cualquier momento del día: temporizador, sonidos, malas, oráculo y más. Todo sucede en tu navegador, a tu ritmo.',
+      'Diez prácticas interactivas para acompañarte en cualquier momento del día: diálogo contemplativo con IA, temporizador, sonidos, malas, oráculo y más. Todo sucede en tu navegador, a tu ritmo.',
     open: (name: string) => `Abrir ${name}`,
     sectionLabel: 'Santuario de práctica',
+    companion: {
+      name: 'Diálogo con el silencio',
+      short: 'Comparte cómo estás y recibe compañía contemplativa (IA).',
+    },
     timer: {
       name: 'Temporizador de meditación',
       short: 'Silencio con campanas al principio, al final y entre tiempos.',
@@ -1115,6 +1119,47 @@ export const es = {
     toastOk: 'Bienvenido al círculo',
     toastError: 'No pudimos completar tu suscripción',
     toastErrorHint: 'Introduce un correo válido e inténtalo de nuevo.',
+  },
+
+  palette: {
+    trigger: 'Abrir la búsqueda de la página (Control·⌘ + K)',
+    label: 'Paleta de comandos',
+    placeholder: '¿Qué necesitas ahora? Escribe «meditar», «dormir», «idioma»…',
+    noResults: 'Sin resultados. Prueba con otra palabra.',
+    groups: {
+      navigate: 'Ir a',
+      meditate: 'Escuchar una melodía',
+      actions: 'Acciones rápidas',
+      language: 'Cambiar idioma',
+    },
+    home: 'Inicio',
+    play: (title: string) => `Escuchar «${title}»`,
+  },
+
+  companion: {
+    greeting:
+      'Hola. Aquí estoy, contigo en este instante. Cuéntame qué te trae hoy: puedes compartir cómo te sientes, lo que buscas, o simplemente saludar al silencio.',
+    placeholder: 'Escribe con calma lo que quieras compartir…',
+    send: 'Enviar al silencio',
+    thinking: 'El silencio te escucha…',
+    error: 'El diálogo no pudo continuar en este momento.',
+    retry: 'Inténtalo de nuevo dentro de un momento',
+    disclaimer:
+      'Un espacio de acompañamiento contemplativo con IA. No sustituye la ayuda profesional: si atraviesas una crisis, busca apoyo de confianza.',
+    suggestions: [
+      'Me cuesta quietar la mente',
+      'Necesito calma antes de dormir',
+      '¿Cómo empiezo a meditar?',
+      'Me siento abrumado por el día',
+    ],
+  },
+
+  notFound: {
+    title: 'Esta página también es impermanente',
+    message:
+      'Lo que buscabas ya no está aquí — o quizá nunca estuvo. Respira: todo lo que necesitas sigue estando AQUÍ.',
+    back: 'Volver al presente',
+    breathe: 'Hacer una pausa de 3 minutos',
   },
 
   footer: {

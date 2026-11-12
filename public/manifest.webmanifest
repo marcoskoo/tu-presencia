@@ -1,7 +1,7 @@
 {
   "name": "Presencia AQUÍ y AHORA",
   "short_name": "Presencia",
-  "description": "Meditaciones guiadas, respiración consciente, yoga nidra, mantras y prácticas contemplativas para habitar el momento presente.",
+  "description": "Melodías de meditación relajantes, respiración consciente, yoga nidra, mantras y prácticas contemplativas para habitar el momento presente.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -39,6 +39,12 @@
     }
   ],
   "shortcuts": [
+    {
+      "name": "Diálogo con el silencio",
+      "short_name": "Diálogo",
+      "description": "Compañía contemplativa con IA para este instante",
+      "url": "/#santuario-dialogo"
+    },
     {
       "name": "Pausa de 3 minutos",
       "short_name": "Pausa",

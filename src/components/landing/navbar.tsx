@@ -3,7 +3,7 @@
 import * as React from 'react'
 import Link from 'next/link'
 import { useTheme } from 'next-themes'
-import { Check, Clock3, Download, Languages, Menu, Moon, Sparkles, Sun, Wind } from 'lucide-react'
+import { Check, Clock3, Download, Languages, Menu, Moon, Search, Sparkles, Sun, Wind } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -21,8 +21,10 @@ import {
 import { EnsoMark } from '@/components/landing/enso-logo'
 import { LANGS, useI18n } from '@/lib/i18n/context'
 import { usePwaInstall } from '@/components/pwa/use-install'
+import { PALETTE_OPEN_EVENT, PAUSE_OPEN_EVENT } from '@/lib/events'
 
-export const PAUSE_OPEN_EVENT = 'presencia:pause-open'
+// Re-exportado para mantener las importaciones existentes (pause-overlay)
+export { PAUSE_OPEN_EVENT }
 
 export function Navbar() {
   const { d, lang, setLang } = useI18n()
@@ -94,6 +96,23 @@ export function Navbar() {
               <Download className="size-[18px]" />
             </Button>
           ) : null}
+
+          {/* Búsqueda / paleta de comandos (Ctrl·⌘ + K) */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent(PALETTE_OPEN_EVENT))
+            }
+            aria-label={d.palette.trigger}
+            title={d.palette.trigger}
+            className="h-9 gap-2 px-2.5 text-muted-foreground hover:text-foreground"
+          >
+            <Search className="size-[18px]" aria-hidden="true" />
+            <kbd className="hidden rounded-md border border-border bg-secondary px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground xl:inline-block">
+              ⌘K
+            </kbd>
+          </Button>
 
           {/* Selector de idioma */}
           <DropdownMenu>
