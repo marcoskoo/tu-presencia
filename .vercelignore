@@ -1,0 +1,7 @@
+# Lo que la app no necesita en Vercel (subida más ligera y rápida)
+skills
+scripts
+upload
+download
+dev.log
+*.log
