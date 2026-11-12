@@ -28,7 +28,6 @@ export const es = {
     back: 'Volver',
     openGuide: 'Abrir la guía',
     practiceNow: 'Practicar ahora',
-    audioEs: 'Audio en español',
     premium: 'Presencia+',
     loading: 'Cargando…',
   },
@@ -68,7 +67,7 @@ export const es = {
     ctaPrimary: 'Respirar ahora',
     ctaSecondary: 'Explorar las prácticas',
     chips: [
-      'Melodías de meditación',
+      'Meditaciones guiadas',
       'Presencia consciente',
       'Respiración',
       'Audio con campanas',
@@ -215,14 +214,20 @@ export const es = {
   },
 
   meditations: {
-    eyebrow: 'Melodías de meditación con audio',
+    eyebrow: 'Meditaciones guiadas con voz',
     titleA: 'Escucha, respira,',
     titleB: 'regresa',
     description:
-      'Melodías serenas de meditación con cuencos y campanas tibetanas. Elige una, ponte los auriculares y deja que la música te acompañe de vuelta al presente.',
-    listLabel: 'Lista de melodías de meditación',
-    tip: 'Consejo: busca un lugar tranquilo, usa auriculares si puedes y deja el móvil en silencio. Este es tu momento.',
-    sectionLabel: 'Melodías de meditación con audio',
+      'Meditaciones guiadas con una voz serena sobre melodías de cuencos y campanas tibetanas. La guía te habla en tu idioma mientras la música te acompaña de vuelta al presente.',
+    listLabel: 'Lista de meditaciones guiadas',
+    tip: 'Consejo: busca un lugar tranquilo, usa auriculares si puedes y deja el móvil en silencio. Si prefieres solo la melodía, puedes apagar la voz guía en el reproductor.',
+    sectionLabel: 'Meditaciones guiadas con audio',
+    guide: {
+      enable: 'Activar la voz guía',
+      disable: 'Desactivar la voz guía',
+      unavailable:
+        'Tu navegador no ofrece voz para este idioma: la melodía seguirá sin guía.',
+    },
     player: {
       position: 'Posición de la meditación',
       rewind: 'Retroceder diez segundos',

@@ -28,7 +28,6 @@ export const pt: Dict = {
     back: 'Voltar',
     openGuide: 'Abrir o guia',
     practiceNow: 'Praticar agora',
-    audioEs: 'Áudio em espanhol',
     premium: 'Presença+',
     loading: 'Carregando…',
   },
@@ -68,7 +67,7 @@ export const pt: Dict = {
     ctaPrimary: 'Respirar agora',
     ctaSecondary: 'Explorar as práticas',
     chips: [
-      'Melodias de meditação',
+      'Meditações guiadas',
       'Presença consciente',
       'Respiração',
       'Áudio com sinos',
@@ -215,14 +214,20 @@ export const pt: Dict = {
   },
 
   meditations: {
-    eyebrow: 'Melodias de meditação com áudio',
+    eyebrow: 'Meditações guiadas com voz',
     titleA: 'Escute, respire,',
     titleB: 'volte',
     description:
-      'Melodias serenas de meditação com tigelas e sinos tibetanos. Escolha uma, coloque os fones e deixe a música acompanhá-lo de volta ao presente.',
-    listLabel: 'Lista de melodias de meditação',
-    tip: 'Dica: procure um lugar tranquilo, use fones se puder e deixe o celular em silêncio. Este é o seu momento.',
-    sectionLabel: 'Melodias de meditação com áudio',
+      'Meditações guiadas com uma voz serena sobre melodias de tigelas e sinos tibetanos. A guia fala no teu idioma enquanto a música te acompanha de volta ao presente.',
+    listLabel: 'Lista de meditações guiadas',
+    tip: 'Dica: procura um lugar tranquilo, usa fones se puderes e deixa o celular em silêncio. Se preferires só a melodia, podes desligar a voz de guia no reprodutor.',
+    sectionLabel: 'Meditações guiadas com áudio',
+    guide: {
+      enable: 'Ativar a voz de guia',
+      disable: 'Desativar a voz de guia',
+      unavailable:
+        'O teu navegador não oferece voz para este idioma: a melodia seguirá sem guia.',
+    },
     player: {
       position: 'Posição da meditação',
       rewind: 'Voltar dez segundos',

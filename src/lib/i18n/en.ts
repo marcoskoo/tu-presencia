@@ -28,7 +28,6 @@ export const en: Dict = {
     back: 'Back',
     openGuide: 'Open the guide',
     practiceNow: 'Practice now',
-    audioEs: 'Audio in Spanish',
     premium: 'Presence+',
     loading: 'Loading…',
   },
@@ -68,7 +67,7 @@ export const en: Dict = {
     ctaPrimary: 'Breathe now',
     ctaSecondary: 'Explore the practices',
     chips: [
-      'Meditation melodies',
+      'Guided meditations',
       'Conscious presence',
       'Breathing',
       'Audio with bells',
@@ -214,14 +213,20 @@ export const en: Dict = {
   },
 
   meditations: {
-    eyebrow: 'Meditation melodies with audio',
+    eyebrow: 'Guided meditations with voice',
     titleA: 'Listen, breathe,',
     titleB: 'return',
     description:
-      'Serene meditation melodies with Tibetan bowls and bells. Choose one, put on your headphones and let the music walk you back to the present.',
-    listLabel: 'List of meditation melodies',
-    tip: 'Tip: find a quiet place, use headphones if you can, and silence your phone. This is your time.',
-    sectionLabel: 'Meditation melodies with audio',
+      'Guided meditations with a serene voice over Tibetan bowl and bell melodies. The guide speaks your language while the music walks you back to the present.',
+    listLabel: 'List of guided meditations',
+    tip: 'Tip: find a quiet place, use headphones if you can, and silence your phone. If you prefer the melody alone, you can turn the guiding voice off in the player.',
+    sectionLabel: 'Guided meditations with audio',
+    guide: {
+      enable: 'Turn on the guiding voice',
+      disable: 'Turn off the guiding voice',
+      unavailable:
+        'Your browser has no voice for this language: the melody will play without guidance.',
+    },
     player: {
       position: 'Meditation position',
       rewind: 'Rewind ten seconds',

@@ -12,6 +12,8 @@ import {
   Play,
   Rewind,
   Timer,
+  Volume2,
+  VolumeX,
   Waves,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -23,16 +25,10 @@ import { useI18n } from '@/lib/i18n/context'
 import { usePremium } from '@/lib/premium'
 import { logPractice } from '@/lib/practice-log'
 import { useToast } from '@/hooks/use-toast'
+import { useMeditationGuide } from '@/hooks/use-meditation-guide'
+import { MEDITATION_GUIDES, type MeditationId } from '@/lib/meditation-guides'
+import { warmUpSpeech } from '@/lib/speech'
 import { PLAY_MEDITATION_EVENT } from '@/lib/events'
-
-type MeditationId =
-  | 'presencia'
-  | 'escaneo'
-  | 'dormir'
-  | 'pausa'
-  | 'caminando'
-  | 'yogaNidra'
-  | 'extendida'
 
 type Meditation = {
   id: MeditationId
@@ -115,6 +111,14 @@ export function Meditations() {
   const autoplayRef = React.useRef(false)
   const loggedRef = React.useRef(false)
 
+  const guide = useMeditationGuide(lang, {
+    // La melodía baja mientras habla la voz guía y vuelve a subir después
+    onDuck: (ducked) => {
+      if (audioRef.current) audioRef.current.volume = ducked ? 0.22 : 1
+    },
+    onUnavailable: () => toast({ title: d.meditations.guide.unavailable }),
+  })
+
   const [selectedId, setSelectedId] = React.useState<MeditationId>('presencia')
   const [playing, setPlaying] = React.useState(false)
   const [time, setTime] = React.useState(0)
@@ -147,6 +151,8 @@ export function Meditations() {
     if (playing) {
       audio.pause()
     } else {
+      // Desbloquear el sintetizador dentro del gesto (iOS Safari)
+      if (guide.canGuide && guide.guideOn) warmUpSpeech()
       audio.play().catch(() => {})
     }
   }
@@ -164,6 +170,8 @@ export function Meditations() {
       togglePlay()
       return
     }
+    if (guide.canGuide && guide.guideOn) warmUpSpeech()
+    guide.endSession()
     autoplayRef.current = true
     setSelectedId(m.id)
     setPlaying(false)
@@ -204,6 +212,7 @@ export function Meditations() {
 
   // Registrar la práctica al terminar la reproducción
   const handleEnded = () => {
+    guide.endSession()
     setPlaying(false)
     setTime(0)
     if (!loggedRef.current && duration > 60) {
@@ -290,12 +299,6 @@ export function Meditations() {
                         <span>{info.duration}</span>
                         <span aria-hidden="true">·</span>
                         <span>{info.tag}</span>
-                        {lang !== 'es' ? (
-                          <>
-                            <span aria-hidden="true">·</span>
-                            <span>{d.common.audioEs}</span>
-                          </>
-                        ) : null}
                         {m.premium ? (
                           <span className={`ml-auto inline-flex items-center gap-1 rounded-full border border-gold/40 bg-gold/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold ${locked ? '' : 'hidden'}`}>
                             <Lock className="size-3" aria-hidden="true" />
@@ -378,6 +381,23 @@ export function Meditations() {
                   <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
                     {item.description}
                   </p>
+                  {/* Indicación que la voz guía está diciendo ahora */}
+                  {guide.caption ? (
+                    <div
+                      aria-live="polite"
+                      className="mx-auto mt-5 flex max-w-md items-start gap-2.5 rounded-2xl border border-sage/30 bg-sage-soft/40 px-4 py-3 text-left dark:bg-sage-soft/25"
+                    >
+                      <Volume2
+                        className={`mt-0.5 size-4 shrink-0 text-sage ${
+                          guide.speaking ? 'animate-pulse' : 'opacity-40'
+                        }`}
+                        aria-hidden="true"
+                      />
+                      <p className="text-sm italic leading-relaxed text-foreground/80">
+                        {guide.caption}
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
 
                 {/* Barra de progreso */}
@@ -441,6 +461,44 @@ export function Meditations() {
                   >
                     {rate === 1 ? '1×' : `${rate}×`}
                   </Button>
+                  {guide.canGuide ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const next = !guide.guideOn
+                        guide.setGuideEnabled(next)
+                        if (next && playing) {
+                          guide.handlePlay(
+                            MEDITATION_GUIDES[selectedId][lang],
+                            audioRef.current?.currentTime ?? 0
+                          )
+                        }
+                      }}
+                      aria-pressed={guide.guideOn}
+                      aria-label={
+                        guide.guideOn
+                          ? d.meditations.guide.disable
+                          : d.meditations.guide.enable
+                      }
+                      title={
+                        guide.guideOn
+                          ? d.meditations.guide.disable
+                          : d.meditations.guide.enable
+                      }
+                      className={`h-11 min-w-16 rounded-full border-border/80 hover:text-foreground ${
+                        guide.guideOn
+                          ? 'border-sage/60 bg-sage-soft/70 text-sage dark:bg-sage-soft/40'
+                          : 'text-muted-foreground'
+                      }`}
+                    >
+                      {guide.guideOn ? (
+                        <Volume2 className="size-4" aria-hidden="true" />
+                      ) : (
+                        <VolumeX className="size-4" aria-hidden="true" />
+                      )}
+                    </Button>
+                  ) : null}
                 </div>
               </CardContent>
             </Card>
@@ -500,8 +558,19 @@ export function Meditations() {
         ref={audioRef}
         src={selected.file}
         preload="metadata"
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
+        onPlay={() => {
+          setPlaying(true)
+          if (guide.guideOn) {
+            guide.handlePlay(
+              MEDITATION_GUIDES[selectedId][lang],
+              audioRef.current?.currentTime ?? 0
+            )
+          }
+        }}
+        onPause={() => {
+          setPlaying(false)
+          guide.pauseSession()
+        }}
         onEnded={handleEnded}
         onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
         onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
