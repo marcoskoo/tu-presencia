@@ -1136,6 +1136,10 @@ export const en: Dict = {
     thinking: 'The silence is listening…',
     error: 'The dialogue could not continue right now.',
     retry: 'Try again in a little while',
+    listen: 'Listen',
+    stopVoice: 'Stop voice',
+    voiceToggle: 'Read replies aloud',
+    voiceUnavailable: 'Your browser has no voice available for this language.',
     disclaimer:
       'A contemplative companionship space powered by AI. It does not replace professional help: if you are going through a crisis, please seek support you can trust.',
     suggestions: [

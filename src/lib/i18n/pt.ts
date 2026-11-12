@@ -1143,6 +1143,10 @@ export const pt: Dict = {
     thinking: 'O silêncio está a ouvir…',
     error: 'O diálogo não pôde continuar neste momento.',
     retry: 'Tenta novamente dentro de um momento',
+    listen: 'Ouvir',
+    stopVoice: 'Parar voz',
+    voiceToggle: 'Ler as respostas em voz alta',
+    voiceUnavailable: 'O teu navegador não oferece voz para este idioma.',
     disclaimer:
       'Um espaço de acompanhamento contemplativo com IA. Não substitui ajuda profissional: se estás a atravessar uma crise, procura apoio de confiança.',
     suggestions: [

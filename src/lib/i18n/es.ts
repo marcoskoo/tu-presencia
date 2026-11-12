@@ -1144,6 +1144,10 @@ export const es = {
     thinking: 'El silencio te escucha…',
     error: 'El diálogo no pudo continuar en este momento.',
     retry: 'Inténtalo de nuevo dentro de un momento',
+    listen: 'Escuchar',
+    stopVoice: 'Detener voz',
+    voiceToggle: 'Leer las respuestas en voz alta',
+    voiceUnavailable: 'Tu navegador no ofrece voz para este idioma.',
     disclaimer:
       'Un espacio de acompañamiento contemplativo con IA. No sustituye la ayuda profesional: si atraviesas una crisis, busca apoyo de confianza.',
     suggestions: [
