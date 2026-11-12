@@ -12,6 +12,22 @@
   "lang": "es",
   "dir": "ltr",
   "categories": ["lifestyle", "health", "spirituality"],
+  "screenshots": [
+    {
+      "src": "/icons/screenshot-inicio.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Melodías de meditación y presencia consciente"
+    },
+    {
+      "src": "/icons/screenshot-santuario.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "El santuario: diez herramientas contemplativas"
+    }
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
